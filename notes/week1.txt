@@ -1,0 +1,106 @@
+Solve problems w/o being explicitly programmed
+
+Parameters for function, decision trees, state machines
+
+Why programs?
+ - solve problems in a structured way
+ - conditionals
+ - iteration/recursion
+ - subprograms
+ - types
+
+How to search through space of programs in an intelligent, adaptive way?
+
+Limits:
+Solutions may not be fully correct, consistent, justifiable, certain, orderly, simple, or decisive.
+
+HOW TO DESIGN PROGRAM REPRESENTION?
+
+Must have flexibility to express solutions to a wide variety of problems
+
+Fixed length character string?
+ - simple
+ - not flexible but works for many simple problems
+	- Ex. Optimizing parameters for math model or lengths of trusses in a bridge
+
+Finite state machines?
+ - simple to represent (state transition table)
+ - good for simple control (ant problem) and maybe others (regex)
+ - not very flexible
+
+Problems: limits flexibility, understandability and convenience
+
+Solution:
+LISP S-expressions
+
+(+ 1 2) --> 1 + 2
+(+ (* 1 2) 3) --> 1*2+3
+
+Other functions: conditionals, state variables, assignment, etc
+
+Very powerful, flexible, and relatively easy to parse as there is only one form of the syntax.
+Easy to write by hand
+
+Can be mutated, recombined etc.
+
+Need a set of functions
+	Ex. Math operators  (needed for symbolic regression)
+	Boolean operators,
+	Conditionals,
+	Iteration/recursion/assignment (more advanced)
+	All have # op operands
+
+And a set of terminals (0 arg functions)
+	Ex. Variables (inputs to system)
+	Constants (some numbers, does not need all as it can evolve them with math)
+	(both needed for symbolic regression)
+
+Essentially a tree, branches' internal points labelled with functions and leaves labelled with terminals
+
+Important to enforce argument types and ranges without crashing 
+(ex. Sqrt of negative numbers, division by 0, etc) 
+	- either define a "safe" alternative, or a special "undefined" value
+		○ For symbolic regressions I would prefer undefined as it would allow me to impose a fitness cost
+
+May want to avoid introduction Boolean values into the program for this reason (dedicated conditional functions but no Boolean type)
+
+What functions and terminals are needed (not obvious)
+
+Ask about testing (libraries, etc)
+
+Python API
+
+Tests
+
+interp = Interpreter(
+{
+	('+', lambda a, b : a+b, 2),
+	('A', 10),
+}
+)
+
+Interp(
+('+' ('A',), ('A',))
+)
+
+
+
+----
+
+Next: methods for generating initial trees
+	Start w/ random function, and recursively add functions/terminals for each function
+
+POSSIBLE PROJECTS:
+Optimizing control
+Planning
+Sequence induction
+Symbolic regression
+Forecasting
+Etc…
+
+
+next
+block out time to read
+
+
+
