@@ -1,4 +1,6 @@
-#from operator import *
+import random
+import math
+from inspect import signature
 
 def head(exp):
     return exp[0]
@@ -6,8 +8,11 @@ def head(exp):
 def tail(exp):
     return exp[1:]
 
+def nargs(func):
+    return len(signature(func).parameters)
+
 def interpret(exp):
-    if type(exp) is int:
+    if (type(exp) is int) or (type(exp) is float):
         return exp
     else:
         return head(exp)(
@@ -15,7 +20,7 @@ def interpret(exp):
             )
 
 def prettyprint(exp, indent=0):
-    if type(exp) is int:
+    if (type(exp) is int) or (type(exp) is float):
         print(" "*indent+str(exp))
     elif callable(exp):
         print(" "*indent+exp.__name__)
@@ -23,8 +28,8 @@ def prettyprint(exp, indent=0):
         prettyprint(head(exp), indent)
         for arg in tail(exp):
             prettyprint(arg, indent+3)
+    
 
-import math
             
 def add(a, b):
     return a+b;
@@ -52,6 +57,22 @@ def ln(a):
     if a<=0:
         return 0
     return math.log(a)
+
+FUNCTIONS = {add, sub, mul, div, sqrt, exp, ln}
+TERMINALS = {0,1,2,3,4,5,6,7,8,9}
+BOTH = list(FUNCTIONS.union(TERMINALS))
+#print(BOTH)
+
+def randexp(atom):
+    if atom in TERMINALS:
+        return atom
+    if atom in FUNCTIONS:
+        return (atom, *[randexp(random.choice(BOTH)) for _ in range(nargs(atom))])
+
+
+prettyprint(
+randexp(add)
+    )
 
 """
 print(
