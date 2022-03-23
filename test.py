@@ -21,6 +21,7 @@ def sqrt(a):
     return math.sqrt(a)
 
 def exp(a,b):
+    a, b = float(a), float(b)
     if a<=0:
         return 0
     return a**b;
