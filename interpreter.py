@@ -13,70 +13,47 @@ def tail(exp):
 def nargs(func):
     return len(signature(func).parameters)
 
-def interpret(exp, definitions={}):
+def interpret(exp, definitions=None):
     if (type(exp) is int) or (type(exp) is float):
         return exp
     if type(exp) is str:
         return definitions[exp]
-    return head(exp)(
-        *map(lambda e: interpret(e, definitions), tail(exp))
-        )
-
-def asciiprint(exp, indent=0):
-    if (type(exp) is int) or (type(exp) is float):
-        print("|"*indent+str(exp))
-    elif callable(exp):
-        print("|"*indent+exp.__name__)
-    else:
-        asciiprint(head(exp), indent)
-        for arg in tail(exp):
-            asciiprint(arg, indent+1)
-    
-def add(a, b):
-    return a+b;
-
-def sub(a, b):
-    return a-b;
-
-def mul(a, b):
-    return a*b;
-
-def div(a, b):
-    if b==0:
+    try:
+        return head(exp)(
+            *map(lambda e: interpret(e, definitions), tail(exp))
+            )
+    except OverflowError:
         return 0
-    return a/b
 
-def sqrt(a):
-    if a<0:
-        return 0
-    return math.sqrt(a)
+def asciiprint(exp):
+    def _asciiprint(exp, indent=0):
+        if (type(exp) is int) or (type(exp) is float) or (type(exp) is str):
+            return "|"*indent+str(exp)
+        elif callable(exp):
+            return "|"*indent+exp.__name__
+        else:
+            return "\n".join((
+                _asciiprint(head(exp), indent),
+                *(_asciiprint(arg, indent+1) for arg in tail(exp)),
+                ))
+    return _asciiprint(exp, indent=0)
 
-def exp(a,b):
-    return a**b;
-
-def ln(a):
-    if a<=0:
-        return 0
-    return math.log(a)
-
-FUNCTIONS = {add, sub, mul, div, sqrt, exp, ln}
-TERMINALS = {0,1,2,3,4,5,6,7,8,9}
-
-def randexp(F, T):
+def randexp(F, T, maxdepth=5):
     U = list(F.union(T))
-    def _randexp(atom):
-        print(atom)
+    def _randexp(atom, depth=2):
         if atom in T:
             return atom
         if atom in F:
-            return (atom, *[_randexp(random.choice(U)) for _ in range(nargs(atom))])
+            return (atom, *[_randexp(
+                random.choice(U) if depth<maxdepth else random.choice(list(T)), depth+1
+                ) for _ in range(nargs(atom))])
     return _randexp(random.choice(list(F)))
     
 _count = 0
 def _newname():
-    global count
+    global _count
     _count += 1
-    return "CHILD"+str(count)
+    return "CHILD"+str(_count)
 
 def graphprint(exp):
     dot = graphviz.Digraph()
