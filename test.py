@@ -75,13 +75,13 @@ class Test(unittest.TestCase):
         TERMINALS = {0,1,2,3,4,5, 'X', 'Y'}
         
         #just making sure there are no errors
-        for _ in range(50):
+        for _ in range(1000):
             interpreter.interpret(
                 interpreter.randexp(FUNCTIONS, TERMINALS),
                 {'X':5, 'Y':10}
                 )
     
-        interpreter.graphprint(interpreter.randexp(FUNCTIONS, TERMINALS, 10))
+        interpreter.graphprint(interpreter.randexp(FUNCTIONS, TERMINALS, 100))
 
 
 if __name__ == '__main__':
