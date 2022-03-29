@@ -31,6 +31,11 @@ def ln(a):
         return 0
     return math.log(a)
 
+print(
+interpreter.get_subindices([add, [ln, 2], [mul, 2, 3]])
+)
+
+'''
 
 import unittest
 
@@ -86,3 +91,4 @@ class Test(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+'''
