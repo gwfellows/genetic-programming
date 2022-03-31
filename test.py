@@ -35,6 +35,14 @@ print(
 interpreter.get_subindices([add, [ln, 2], [mul, 2, 3]])
 )
 
+print(
+interpreter.get_subindices([ln, 1])
+)
+
+print(
+interpreter.get_subindices([exp, [exp, 1, 2], [exp, 2, 2]])
+)
+
 '''
 
 import unittest

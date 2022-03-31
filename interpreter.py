@@ -73,29 +73,29 @@ def graphprint(exp):
     _graphprint(exp, "PARENT")
     dot.render('graph-output/graph.gv', view=True)
 
-# yield the indexes for all subtrees of an expression, to use in crossover
+# return the indexes for all subtrees of an expression, to use in crossover
 # ex. for the expression [+ [ln 2] [* 2 3]] it would return:
 # (1,) , (2,) , (1,1) , (2,1) , (2,2) 
 # as there are subtrees at exp[1], exp[2], exp[1][1], exp[2][1], and exp[2][2] but no more
 def get_subindices(exp):
     ret = []
-    curr = [(1,),(2,)]
+    curr = [(_,) for _ in range(1,1+nargs(exp[0]))]
     while len(curr) > 0:
         for i, idxs in enumerate(curr):
             subtree = access_subindex(exp, idxs)
             if type(subtree) in (tuple, list):
-                #add more trees
                 ret.append(idxs)
                 del curr[i]
-                print(subtree)
                 for i in range(1,1+nargs(subtree[0])):
-                    print(">",i)
                     curr.append(idxs+(i,))
             else:
                 ret.append(idxs)
                 del curr[i]
-        print(curr, idxs)
-    return ret  
+    return rets
+
+# return a radom subindex of a expression
+def random_subindex(exp):
+    return random.choice(get_subindices())
 
 # access a subtree of an index by indices
 # ex. access_subindex(exp, (1,3,4,2,1)) would return exp[1][3][4][2][1] 
