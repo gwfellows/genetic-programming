@@ -91,7 +91,7 @@ def get_subindices(exp):
             else:
                 ret.append(idxs)
                 del curr[i]
-    return rets
+    return ret
 
 # return a radom subindex of a expression
 def random_subindex(exp):
