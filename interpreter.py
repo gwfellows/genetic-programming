@@ -59,12 +59,12 @@ def graphprint(exp):
     dot = graphviz.Digraph()
 
     def _graphprint(exp, parentname):
-        if type(exp) is tuple:
+        if type(exp) in (tuple, list):
             for child in tail(exp):
                 childname = _newname()
                 dot.node(
                     childname,
-                    head(child).__name__ if (type(child) is tuple) else str(child)
+                    head(child).__name__ if (type(child) in (tuple, list)) else str(child)
                     )
                 dot.edge(parentname, childname)
                 _graphprint(child, childname)
@@ -91,16 +91,40 @@ def get_subindices(exp):
             else:
                 ret.append(idxs)
                 del curr[i]
+    ret.append((slice(None),)) #can also get full tree
     return ret
 
 # return a radom subindex of a expression
 def random_subindex(exp):
-    return random.choice(get_subindices())
+    return random.choice(get_subindices(exp))
 
 # access a subtree of an index by indices
 # ex. access_subindex(exp, (1,3,4,2,1)) would return exp[1][3][4][2][1] 
 def access_subindex(exp, idxs):
-    ret = exp[:]
+    ret = exp
     for i in idxs:
         ret = ret[i]
     return ret
+
+def modify_subindex(exp, idxs, newval):
+    if len(idxs) == 0:
+        print(exp)
+        exp = newval
+    else:
+        modify_subindex(exp[idxs[0]], idxs[1:], newval)
+
+def mod_subindex(exp, idxs, newval):
+    for i in idxs:
+        exp = exp[i]
+    print("exp:"+str(exp))
+    exp = newval
+
+def crossover(exp1, exp2):
+    modify_subindex(exp1, (1,), "TESTING")
+
+a = [1,2,3,4,5,6,7,8,9,10]
+mod_subindex(a, (2,), "HELP! I AM IN A LIST")
+print("A")
+print("modified"+str(a))
+    
+    

@@ -43,6 +43,24 @@ print(
 interpreter.get_subindices([exp, [exp, 1, 2], [exp, 2, 2]])
 )
 
+a = [div, [sub, [exp, 'X', 'Y'], 10], 3]
+b = [add, [mul, 'X', 2], 10]
+
+print(interpreter.asciiprint(a))
+print("\n\n")
+print(interpreter.asciiprint(b))
+print("\n\n")
+print("\n\n")
+
+interpreter.crossover(a,b)
+#a = interpreter.access_subindex(a, (1,))
+#a = "TESTING"
+
+print(interpreter.asciiprint(a))
+print("\n\n")
+print(interpreter.asciiprint(b))
+
+
 '''
 
 import unittest
