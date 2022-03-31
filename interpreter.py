@@ -106,39 +106,18 @@ def access_subindex(exp, idxs):
         ret = ret[i]
     return ret
 
-'''
-def mod_subindex(exp, idxs, newval):
-    for i in idxs:
-        exp = exp[i]
-    print("exp:"+str(exp))
-    exp = newval
-
-def crossover(exp1, exp2):
-    modify_subindex(exp1, (1,), "TESTING")
-
-
-def modify_subindex(exp, idxs, newval):
-    if len(idxs) == 0:
-        exp = newval
-    else:
-        modify_subindex(exp[idxs[0]], idxs[1:], newval)
-        '''
-
 #recreate array with idxes
 def with_subindex(exp, idxs, newval):
-    print(exp)
+    #print(exp)
     if len(idxs) == 0:
         return newval
     else:
         return [*exp[:idxs[0]], with_subindex(exp[idxs[0]], idxs[1:], newval), *exp[idxs[0]+1:]]
 
-#bad! ugly!
-'''
-def set_subindex(exp, idxs, newval):
-   exec("exp"+"".join("["+str(i)+"]" for i in idxs)+" = newval", locals())'''
 
-a = [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10]]
-a = with_subindex(a, (2,), 100)
-print("modified: "+str(a))
+a = [[1],[2],[3],[4,4,4,[4,3,3]],[[5,3,3], 4],[6],[7],[8],[9],[10]]
+print(str(a))
+a = with_subindex(a, (3,3,1), 1)
+print(str(a))
     
     
