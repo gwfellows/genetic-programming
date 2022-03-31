@@ -30,7 +30,7 @@ def ln(a):
     if a<=0:
         return 0
     return math.log(a)
-'''
+
 print(
 interpreter.get_subindices([add, [ln, 2], [mul, 2, 3]])
 )
@@ -42,25 +42,22 @@ interpreter.get_subindices([ln, 1])
 print(
 interpreter.get_subindices([exp, [exp, 1, 2], [exp, 2, 2]])
 )
-'''
-'''
+
+
 a = [div, [sub, [exp, 'X', 'Y'], 10], 3]
 b = [add, [mul, 'X', 2], 10]
 
-print(interpreter.asciiprint(a))
-print("\n\n")
-print(interpreter.asciiprint(b))
-print("\n\n")
+print(a)
+print(b)
 print("\n\n")
 
-interpreter.crossover(a,b)
+a, b = interpreter.crossover(a,b)
 #a = interpreter.access_subindex(a, (1,))
 #a = "TESTING"
 
-print(interpreter.asciiprint(a))
-print("\n\n")
-print(interpreter.asciiprint(b))
-'''
+print(a)
+print(b)
+
 
 '''
 

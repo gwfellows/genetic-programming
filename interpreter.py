@@ -108,16 +108,25 @@ def access_subindex(exp, idxs):
 
 #recreate array with idxes
 def with_subindex(exp, idxs, newval):
-    #print(exp)
     if len(idxs) == 0:
         return newval
     else:
         return [*exp[:idxs[0]], with_subindex(exp[idxs[0]], idxs[1:], newval), *exp[idxs[0]+1:]]
 
+import copy
 
-a = [[1],[2],[3],[4,4,4,[4,3,3]],[[5,3,3], 4],[6],[7],[8],[9],[10]]
-print(str(a))
-a = with_subindex(a, (3,3,1), 1)
-print(str(a))
+def crossover(exp1, exp2):
+    #print(exp1)
+    #print(exp2)
+    sub_1 = random_subindex(exp1)
+    sub_2 = random_subindex(exp2)
     
+    print("1: "+str(sub_1))
+    print("2: "+str(sub_2))
+    
+    oldexp1 = copy.deepcopy(exp1)
+    
+    exp1 = with_subindex(exp1, sub_1, access_subindex(exp2, sub_2))
+    exp2 = with_subindex(exp2, sub_2, access_subindex(oldexp1, sub_1))
+    return exp1, exp2
     
