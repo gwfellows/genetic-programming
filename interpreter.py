@@ -101,18 +101,12 @@ def random_subindex(exp):
 # access a subtree of an index by indices
 # ex. access_subindex(exp, (1,3,4,2,1)) would return exp[1][3][4][2][1] 
 def access_subindex(exp, idxs):
-    ret = exp
+    ret = exp#[:]
     for i in idxs:
         ret = ret[i]
     return ret
 
-def modify_subindex(exp, idxs, newval):
-    if len(idxs) == 0:
-        print(exp)
-        exp = newval
-    else:
-        modify_subindex(exp[idxs[0]], idxs[1:], newval)
-
+'''
 def mod_subindex(exp, idxs, newval):
     for i in idxs:
         exp = exp[i]
@@ -122,9 +116,29 @@ def mod_subindex(exp, idxs, newval):
 def crossover(exp1, exp2):
     modify_subindex(exp1, (1,), "TESTING")
 
-a = [1,2,3,4,5,6,7,8,9,10]
-mod_subindex(a, (2,), "HELP! I AM IN A LIST")
-print("A")
-print("modified"+str(a))
+
+def modify_subindex(exp, idxs, newval):
+    if len(idxs) == 0:
+        exp = newval
+    else:
+        modify_subindex(exp[idxs[0]], idxs[1:], newval)
+        '''
+
+#recreate array with idxes
+def with_subindex(exp, idxs, newval):
+    print(exp)
+    if len(idxs) == 0:
+        return newval
+    else:
+        return [*exp[:idxs[0]], with_subindex(exp[idxs[0]], idxs[1:], newval), *exp[idxs[0]+1:]]
+
+#bad! ugly!
+'''
+def set_subindex(exp, idxs, newval):
+   exec("exp"+"".join("["+str(i)+"]" for i in idxs)+" = newval", locals())'''
+
+a = [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10]]
+a = with_subindex(a, (2,), 100)
+print("modified: "+str(a))
     
     
