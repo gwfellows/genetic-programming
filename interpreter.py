@@ -55,7 +55,7 @@ def _newname():
     _count += 1
     return "CHILD"+str(_count)
 
-def graphprint(exp):
+def graphprint(exp, name="graph.gv"):
     dot = graphviz.Digraph()
 
     def _graphprint(exp, parentname):
@@ -71,7 +71,7 @@ def graphprint(exp):
             
     dot.node("PARENT", head(exp).__name__)
     _graphprint(exp, "PARENT")
-    dot.render('graph-output/graph.gv', view=True)
+    dot.render('graph-output/'+name, view=True)
 
 # return the indexes for all subtrees of an expression, to use in crossover
 # ex. for the expression [+ [ln 2] [* 2 3]] it would return:
@@ -106,7 +106,7 @@ def access_subindex(exp, idxs):
         ret = ret[i]
     return ret
 
-#recreate array with idxes
+#recreate array, replacing item at idxs with newval
 def with_subindex(exp, idxs, newval):
     if len(idxs) == 0:
         return newval
@@ -115,17 +115,11 @@ def with_subindex(exp, idxs, newval):
 
 import copy
 
+#swap random subtrees between 2 trees
 def crossover(exp1, exp2):
-    #print(exp1)
-    #print(exp2)
     sub_1 = random_subindex(exp1)
     sub_2 = random_subindex(exp2)
-    
-    print("1: "+str(sub_1))
-    print("2: "+str(sub_2))
-    
     oldexp1 = copy.deepcopy(exp1)
-    
     exp1 = with_subindex(exp1, sub_1, access_subindex(exp2, sub_2))
     exp2 = with_subindex(exp2, sub_2, access_subindex(oldexp1, sub_1))
     return exp1, exp2
