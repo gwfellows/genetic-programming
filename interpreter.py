@@ -3,7 +3,6 @@ import math
 from inspect import signature
 import graphviz
 
-
 def head(exp):
     return exp[0]
 
@@ -91,7 +90,7 @@ def get_subindices(exp):
             else:
                 ret.append(idxs)
                 del curr[i]
-    ret.append((slice(None),)) #can also get full tree
+    #ret.append((slice(None),)) #can also get full tree
     return ret
 
 # return a radom subindex of a expression
@@ -123,4 +122,26 @@ def crossover(exp1, exp2):
     exp1 = with_subindex(exp1, sub_1, access_subindex(exp2, sub_2))
     exp2 = with_subindex(exp2, sub_2, access_subindex(oldexp1, sub_1))
     return exp1, exp2
-    
+
+def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=10, crossover_rate=0.5):  
+    max_fitness = float("inf")
+    population = [randexp(functions, terminals, init_max_depth) for _ in range(pop_size)]
+    #change this to use selection criteria later
+    for _ in range(20):
+        fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
+        #normalize (may not be nescessary)
+        s = sum(fitnesses)
+        for f in fitnesses:
+            f = f/s
+        new_pop = []
+        print(">>",len(fitnesses), len(population))
+        while len(new_pop) < pop_size:
+            if random.random()>crossover_rate:
+                for i in crossover(*random.choices(population, weights = fitnesses, k=2)):
+                    new_pop.append(i)
+            else:
+                new_pop.append(*random.choices(population, weights = fitnesses, k=1))
+        population = new_pop
+    return population[fitnesses.index(max(fitnesses))]
+        
+        

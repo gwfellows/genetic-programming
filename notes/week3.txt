@@ -1,0 +1,36 @@
+
+very similar to what I am doing:
+https://github.com/moshesipper/tiny_gp
+
+evolution:
+
+define terminals
+functions
+fitness measure
+terminatio criteria
+parameters (pop size, etc)
+
+raw fitness = sum of fitness for all fitness cases
+s(i,t) = r_max-r(i,t) (if larger is originally better)
+
+adjusted
+a(i,t) = 1/(i+s(i,t))
+0 --> bigger = better
+
+normalized = adjusted / sum(all adjusted fitnesses)
+
+chance of reproduction = normalized fitness
+
+--
+gen = 0
+get initial pop
+
+while the termination criterion is not satisfied:
+	get fitnesses
+	while len(new_pop)<M
+		select either reproduction or crossover
+		if reproduction:
+			reproduce
+		if crossover:
+			cross over
+			

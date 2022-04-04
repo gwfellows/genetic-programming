@@ -88,7 +88,7 @@ class Test(unittest.TestCase):
         
         self.assertEqual(
             interpreter.get_subindices([add, [ln, 2], [mul, 2, 3]]),
-            [(1,), (1, 1), (2,), (2, 2), (2, 1), (slice(None, None, None),)]
+            [(1,), (1, 1), (2,), (2, 2), (2, 1)]
         )
         
         #just making sure there are no errors
@@ -111,6 +111,22 @@ class Test(unittest.TestCase):
         
         interpreter.graphprint(a, "A2.gv")
         interpreter.graphprint(b, "B2.gv")
+    
+    def test_evolve(self):
+        FUNCTIONS = {add, sub, mul, div}
+        TERMINALS = {-1,1}
+        
+        solution = interpreter.evolve(
+            functions=FUNCTIONS,
+            terminals=TERMINALS,
+            fitness_function = lambda exp: abs(interpreter.interpret(exp) - 100),
+            pop_size=500,
+            init_max_depth=10,
+            crossover_rate=0.5)
+        
+        print(interpreter.interpret(solution))
+        print(solution)
+        interpreter.graphprint(solution, "sol.gv")
     
 
 if __name__ == '__main__':
