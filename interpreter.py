@@ -132,10 +132,11 @@ def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=1
     ys = []
     
     #change this to use selection criteria later
-    for _ in range(50):
+    for _ in range(250):
         fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
         xs.append(_)
         ys.append(max(fitnesses))
+        print(_, max(fitnesses))
         new_pop = []
         while len(new_pop) < pop_size:
             if random.random()>crossover_rate:
@@ -154,6 +155,7 @@ def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=1
 
     fig.savefig("test.png")
     plt.show()
-
+    
+    print(fitnesses.index(max(fitnesses)))
     return population[fitnesses.index(max(fitnesses))]
         

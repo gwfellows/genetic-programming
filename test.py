@@ -114,18 +114,18 @@ class Test(unittest.TestCase):
     def test_evolve(self):
         import math
         
-        FUNCTIONS = {add, sub, mul, div, sqrt, exp, ln}
+        FUNCTIONS = {add, sub, mul, div}
         TERMINALS = {1,2,3,4,5}
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: abs(interpreter.interpret(exp) - math.pi),
-            pop_size=500,
-            init_max_depth=20,
-            crossover_rate=0.5)
+            pop_size=200,
+            init_max_depth=10,
+            crossover_rate=0.8)
         
-        print(interpreter.interpret(solution))
+        print("PI = ", interpreter.interpret(solution))
         interpreter.graphprint(solution, "sol.gv")
     
 
