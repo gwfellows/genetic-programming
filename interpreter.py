@@ -123,18 +123,20 @@ def crossover(exp1, exp2):
     exp2 = with_subindex(exp2, sub_2, access_subindex(oldexp1, sub_1))
     return exp1, exp2
 
+import matplotlib.pyplot as plt
+
 def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=10, crossover_rate=0.5):  
-    max_fitness = float("inf")
     population = [randexp(functions, terminals, init_max_depth) for _ in range(pop_size)]
+    
+    xs = []
+    ys = []
+    
     #change this to use selection criteria later
-    for _ in range(20):
+    for _ in range(50):
         fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
-        #normalize (may not be nescessary)
-        s = sum(fitnesses)
-        for f in fitnesses:
-            f = f/s
+        xs.append(_)
+        ys.append(max(fitnesses))
         new_pop = []
-        print(">>",len(fitnesses), len(population))
         while len(new_pop) < pop_size:
             if random.random()>crossover_rate:
                 for i in crossover(*random.choices(population, weights = fitnesses, k=2)):
@@ -142,6 +144,16 @@ def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=1
             else:
                 new_pop.append(*random.choices(population, weights = fitnesses, k=1))
         population = new_pop
+    
+    
+    fig, ax = plt.subplots()
+    ax.plot(xs, ys)
+    ax.set(xlabel='generation', ylabel='max fitness',
+           title='max fitness per generation')
+    ax.grid()
+
+    fig.savefig("test.png")
+    plt.show()
+
     return population[fitnesses.index(max(fitnesses))]
-        
         
