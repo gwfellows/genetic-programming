@@ -34,6 +34,7 @@ def ln(a):
 import unittest
 
 class Test(unittest.TestCase):
+    '''
     def test_interpret(self):
         self.assertEqual(
             interpreter.interpret(
@@ -110,19 +111,20 @@ class Test(unittest.TestCase):
         
         interpreter.graphprint(a, "A2.gv")
         interpreter.graphprint(b, "B2.gv")
+    '''
 
     def test_evolve(self):
         import math
         
-        FUNCTIONS = {add, sub, mul, div}
-        TERMINALS = {1,2,3,4,5}
+        FUNCTIONS = {div, add}
+        TERMINALS = {0,1,2,3,4,5,6,7,8,9,10}
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: abs(interpreter.interpret(exp) - math.pi),
             pop_size=200,
-            init_max_depth=10,
+            init_max_depth=300,
             crossover_rate=0.8)
         
         print("PI = ", interpreter.interpret(solution))

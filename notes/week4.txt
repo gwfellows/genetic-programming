@@ -1,0 +1,22 @@
+PROFILE AND TUNE PARAMETERS
+TUNE PARAMETERS WITH SCRIPT (GRAPH FITNESS PER PARAMETR VALUES)
+SYMBLIC REGRESSION NEXT WEEK
+UPDATE CANVAS
+ADD TERMINATION CRITERIA
+think about whether or not to always to take highest performing individuals
+
+----
+
+approximations for pi the code found
+
+all funcs and 0-10
+((7-ln(4+10)/7)/9) + ln(sqrt(4)*ln(4)*4)
+sqrt((9*ln(9))/2)
+5/(ln(5))
+sqrt(10)
+sqrt(4)-1
+sqrt(sqrt(9))+sqrt(2)
+
+with only div and add and 0-10
+
+((3/(8/(3/1)))/8) + (3)

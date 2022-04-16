@@ -1,1 +1,4 @@
 https://hackernoon.com/how-to-select-a-random-node-from-a-tree-with-equal-probability-childhood-moments-with-father-today-0ip32dp
+https://stackoverflow.com/questions/3272466/how-to-pick-a-random-node-from-a-tree#3272490
+https://en.wikipedia.org/wiki/Reservoir_sampling
+https://www.geeksforgeeks.org/select-random-node-tree-equal-probability/
