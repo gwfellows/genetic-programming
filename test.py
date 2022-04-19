@@ -115,8 +115,9 @@ class Test(unittest.TestCase):
 
     def test_evolve(self):
         import math
+        import matplotlib.pyplot as plt            
         
-        goal = lambda x: x**4+x**3+x**2+x+1
+        goal = lambda x: x**5+x**3+x**2+x+1
         
         def score(exp):
             fitness = 0
@@ -127,7 +128,7 @@ class Test(unittest.TestCase):
             return fitness
         
         FUNCTIONS = {add, mul,sub,exp}
-        TERMINALS = {1,'X'}
+        TERMINALS = {1.0,'X'}
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
@@ -135,7 +136,8 @@ class Test(unittest.TestCase):
             fitness_function = lambda exp: score(exp),
             pop_size=188,
             init_max_depth=10,
-            crossover_rate=0.8)
+            crossover_rate=0.5,
+            selection_cutoff=0.6)
         
         x1=[]
         y1=[]
@@ -152,9 +154,9 @@ class Test(unittest.TestCase):
             y2.append(interpreter.interpret(solution, {'X':x}))
 
         
-        import matplotlib.pyplot as plt
         plt.scatter(x1,y1, color='blue',marker='o')
         plt.plot(x2,y2, color='red', linestyle='--')
+        
         plt.show()
 
         

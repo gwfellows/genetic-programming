@@ -125,7 +125,7 @@ def crossover(exp1, exp2):
 
 import matplotlib.pyplot as plt
 
-def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=10, crossover_rate=0.5):  
+def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=10, crossover_rate=0.5, selection_cutoff=0.99):  
     population = [randexp(functions, terminals, init_max_depth) for _ in range(pop_size)]
     
     xs = []
@@ -138,7 +138,7 @@ def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=1
             xs.append(_)
             ys.append(max(fitnesses))
             print(_, max(fitnesses))
-            if max(fitnesses)>0.9999:
+            if max(fitnesses)>selection_cutoff:
                 break
             new_pop = []
             new_pop.append(population[fitnesses.index(max(fitnesses))])
