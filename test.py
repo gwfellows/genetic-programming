@@ -116,19 +116,51 @@ class Test(unittest.TestCase):
     def test_evolve(self):
         import math
         
-        FUNCTIONS = {div, add}
-        TERMINALS = {0,1,2,3,4,5,6,7,8,9,10}
+        goal = lambda x: x**4+x**3+x**2+x+1
+        
+        def score(exp):
+            fitness = 0
+            for x in (i/10 for i in range(-10,10)):
+                fitness += abs(
+                    interpreter.interpret(exp, {'X':x}) 
+                    - (goal(x)))
+            return fitness
+        
+        FUNCTIONS = {add, mul,sub,exp}
+        TERMINALS = {1,10,5,'X'}
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
-            fitness_function = lambda exp: abs(interpreter.interpret(exp) - math.pi),
-            pop_size=200,
-            init_max_depth=300,
+            fitness_function = lambda exp: score(exp),
+            pop_size=3000,
+            init_max_depth=10,
             crossover_rate=0.8)
         
-        print("PI = ", interpreter.interpret(solution))
+        x1=[]
+        y1=[]
+        x2=[]
+        y2=[]
+        
+        
+        for x in (i/10 for i in range(-10,10)):
+            x1.append(x)
+            y1.append(goal(x))
+        
+        for x in (i/10 for i in range(-10,10)):
+            x2.append(x)
+            y2.append(interpreter.interpret(solution, {'X':x}))
+
+        
+        import matplotlib.pyplot as plt
+        plt.scatter(x1,y1, color='blue',marker='o')
+        plt.plot(x2,y2, color='red', linestyle='--')
+        plt.show()
+
+        
+        #print("PI = ", interpreter.interpret(solution))
         interpreter.graphprint(solution, "sol.gv")
+        interpreter.asciiprint(solution)
     
 
 if __name__ == '__main__':

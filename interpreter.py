@@ -140,12 +140,14 @@ def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=1
         new_pop = []
         new_pop.append(population[fitnesses.index(max(fitnesses))])
         while len(new_pop) < pop_size:
-            if random.random()>crossover_rate:
+            if random.random()<crossover_rate:
                 for i in crossover(*random.choices(population, weights = fitnesses, k=2)):
                     new_pop.append(i)
             else:
                 new_pop.append(*random.choices(population, weights = fitnesses, k=1))
         population = new_pop
+        if max(fitnesses)>0.9999:
+            break
     
     
     fig, ax = plt.subplots()

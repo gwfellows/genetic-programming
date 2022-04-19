@@ -1,0 +1,8 @@
+did symbolic regression
+solving for x^4+x^3+x^2+1
+
+found:
+
+1 + ((x*1)*((x^2)+x))
+
+speed very sensitive to function/terminal set
