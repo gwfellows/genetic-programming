@@ -127,13 +127,13 @@ class Test(unittest.TestCase):
             return fitness
         
         FUNCTIONS = {add, mul,sub,exp}
-        TERMINALS = {1,10,5,'X'}
+        TERMINALS = {1,'X'}
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=3000,
+            pop_size=188,
             init_max_depth=10,
             crossover_rate=0.8)
         
