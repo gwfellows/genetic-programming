@@ -119,13 +119,16 @@ class Test(unittest.TestCase):
         
         goal = lambda x: x**5+x**3+x**2+x+1
         
+        def max_depth(exp, d=0):
+            return max(map(lambda i: max_depth(i,d+1),exp)) if type(exp) in (tuple, list) else d
+                    
         def score(exp):
             fitness = 0
             for x in (i/10 for i in range(-10,10)):
                 fitness += abs(
                     interpreter.interpret(exp, {'X':x}) 
                     - (goal(x)))
-            return fitness
+            return fitness+0.01*max_depth(exp)
         
         FUNCTIONS = {add, mul,sub,exp}
         TERMINALS = {1.0,'X'}
@@ -134,10 +137,10 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=188,
-            init_max_depth=10,
-            crossover_rate=0.5,
-            selection_cutoff=0.6)
+            pop_size=3000,
+            init_max_depth=5,
+            crossover_rate=0.8,
+            selection_cutoff=0.5)
         
         x1=[]
         y1=[]
@@ -161,6 +164,7 @@ class Test(unittest.TestCase):
 
         
         #print("PI = ", interpreter.interpret(solution))
+        print(max_depth(solution))
         interpreter.graphprint(solution, "sol.gv")
         interpreter.asciiprint(solution)
     

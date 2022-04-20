@@ -44,7 +44,7 @@ for crossover_rate in my_shuffle(list(_/10 for _ in range(7,10+1))*10):
             pop_size=188,
             init_max_depth=10,
             crossover_rate=crossover_rate,
-            selection_cutoff=0.6,
-            verbose=False)
+            selection_cutoff=0.5,
+            verbose=True)
     end = datetime.now()
     print(crossover_rate,",",end.timestamp()-start.timestamp())
