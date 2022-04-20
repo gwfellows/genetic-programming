@@ -125,7 +125,7 @@ def crossover(exp1, exp2):
 
 import matplotlib.pyplot as plt
 
-def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=10, crossover_rate=0.5, selection_cutoff=0.99):  
+def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=10, crossover_rate=0.5, selection_cutoff=0.99, verbose=True):  
     population = [randexp(functions, terminals, init_max_depth) for _ in range(pop_size)]
     
     xs = []
@@ -137,7 +137,8 @@ def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=1
             fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
             xs.append(_)
             ys.append(max(fitnesses))
-            print(_, max(fitnesses))
+            if verbose:
+                print(_, max(fitnesses))
             if max(fitnesses)>selection_cutoff:
                 break
             new_pop = []
@@ -152,16 +153,16 @@ def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=1
         except KeyboardInterrupt:
             break
     
-    
-    fig, ax = plt.subplots()
-    ax.plot(xs, ys)
-    ax.set(xlabel='generation', ylabel='max fitness',
-           title='max fitness per generation')
-    ax.grid()
+    if verbose:
+        fig, ax = plt.subplots()
+        ax.plot(xs, ys)
+        ax.set(xlabel='generation', ylabel='max fitness',
+               title='max fitness per generation')
+        ax.grid()
 
-    fig.savefig("test.png")
-    plt.show()
+        fig.savefig("test.png")
+        plt.show()
     
-    print(fitnesses.index(max(fitnesses)))
+    #print(fitnesses.index(max(fitnesses)))
     return population[fitnesses.index(max(fitnesses))]
         
