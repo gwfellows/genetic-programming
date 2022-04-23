@@ -130,16 +130,16 @@ class Test(unittest.TestCase):
                     - (goal(x)))
             return fitness+0.01*max_depth(exp)
         
-        FUNCTIONS = {add, mul,sub,exp}
+        FUNCTIONS = {add, mul,sub}
         TERMINALS = {1.0,'X'}
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=3000,
+            pop_size=100,
             init_max_depth=5,
-            crossover_rate=0.8,
+            crossover_rate=0.9,
             selection_cutoff=0.5)
         
         x1=[]
