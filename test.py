@@ -117,7 +117,8 @@ class Test(unittest.TestCase):
         import math
         import matplotlib.pyplot as plt            
         
-        goal = lambda x: x**5+x**3+x**2+x+1
+        #goal = lambda x: x**5+x**3+x**2+x+1
+        goal = lambda x: math.sin(x*math.pi)
         
         def max_depth(exp, d=0):
             return max(map(lambda i: max_depth(i,d+1),exp)) if type(exp) in (tuple, list) else d
@@ -129,9 +130,22 @@ class Test(unittest.TestCase):
                     interpreter.interpret(exp, {'X':x}) 
                     - (goal(x)))
             return fitness+0.01*max_depth(exp)
-        
+            
         FUNCTIONS = {add, mul,sub}
-        TERMINALS = {1.0,'X'}
+        TERMINALS = {1,'X'}
+        
+        #print a tree as a expression
+        #only works with binary operators +, *, and -
+        def expr_print(exp):
+            if type(exp) in (str, int, float):
+                return str(exp)
+            if exp[0] == add:
+                return "("+expr_print(exp[1])+"+"+expr_print(exp[2])+")"
+            if exp[0] == mul:
+                return "("+expr_print(exp[1])+"*"+expr_print(exp[2])+")"
+            if exp[0] == sub:
+                return "("+expr_print(exp[1])+"-"+expr_print(exp[2])+")"
+        
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
@@ -164,8 +178,11 @@ class Test(unittest.TestCase):
 
         
         #print("PI = ", interpreter.interpret(solution))
-        print(max_depth(solution))
+        #print(max_depth(solution))
         interpreter.graphprint(solution, "sol.gv")
+        print(expr_print(solution))
+        from sympy import sympify
+        print(sympify(expr_print(solution)).expand().simplify())
         interpreter.asciiprint(solution)
     
 

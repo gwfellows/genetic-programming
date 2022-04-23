@@ -54,6 +54,7 @@ def _newname():
     _count += 1
     return "CHILD"+str(_count)
 
+#print a tree to a graph
 def graphprint(exp, name="graph.gv"):
     dot = graphviz.Digraph()
 
@@ -125,13 +126,16 @@ def crossover(exp1, exp2):
 
 import matplotlib.pyplot as plt
 
+# the main evolution loop
+# attemps to evolve a tree to minimize the value of the fitness function, terminating when the selection cutoff is reached or 500 generations pass
+# note that the selection cutoff uses normalized fitness ( 1/(1+raw fitness) ), so 1 is perfect
+# if "verbose" is True on this will print out it's progress and plot it at the end
 def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=10, crossover_rate=0.5, selection_cutoff=0.99, verbose=True):  
     population = [randexp(functions, terminals, init_max_depth) for _ in range(pop_size)]
     
     xs = []
     ys = []
     
-    #change this to use selection criteria later
     for _ in range(500):
         try:
             fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
