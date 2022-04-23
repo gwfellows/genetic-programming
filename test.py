@@ -138,7 +138,7 @@ class Test(unittest.TestCase):
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
             pop_size=100,
-            init_max_depth=5,
+            init_max_depth=4,
             crossover_rate=0.9,
             selection_cutoff=0.5)
         

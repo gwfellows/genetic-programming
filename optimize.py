@@ -68,4 +68,19 @@ def test_pop_size():
         end = datetime.now()
         print(pop_size,",",end.timestamp()-start.timestamp())
 
-test_pop_size();
+def test_init_max_depth():
+    for init_max_depth in my_shuffle(list(range(2,10,1))*10):
+        start = datetime.now()
+        solution = interpreter.evolve(
+                functions=FUNCTIONS,
+                terminals=TERMINALS,
+                fitness_function = lambda exp: score(exp),
+                pop_size=100,
+                init_max_depth=init_max_depth,
+                crossover_rate=0.9,
+                selection_cutoff=0.5,
+                verbose=False)
+        end = datetime.now()
+        print(init_max_depth,",",end.timestamp()-start.timestamp())
+
+test_init_max_depth();
