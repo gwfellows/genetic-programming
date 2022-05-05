@@ -31,6 +31,12 @@ def ln(a):
         return 0
     return math.log(a)
 
+def cos(a):
+    try:
+        return math.cos(a)
+    except:
+        return 0
+        
 import unittest
 
 class Test(unittest.TestCase):
@@ -119,25 +125,37 @@ class Test(unittest.TestCase):
         
         #goal = lambda x: x**5+x**3+x**2+x+1
         goal = lambda x: math.sin(x*math.pi)
+        #goal = lambda x: x%1
+        #goal = lambda x: math.log(x+1.1)
         
         def max_depth(exp, d=0):
             return max(map(lambda i: max_depth(i,d+1),exp)) if type(exp) in (tuple, list) else d
-                    
+        
+        r = range(-10,10,1)
+        
         def score(exp):
             fitness = 0
-            for x in (i/10 for i in range(-10,10)):
+            for x in (i/10 for i in r):
                 fitness += abs(
                     interpreter.interpret(exp, {'X':x}) 
                     - (goal(x)))
             return fitness+0.01*max_depth(exp)
+        
+        import random
+        
+        def randnum():
+            return random.random()*2-1
             
-        FUNCTIONS = {add, mul,sub}
+        FUNCTIONS = {add, mul,sub,div}
         TERMINALS = {1,'X'}
         
         #print a tree as a expression
-        #only works with binary operators +, *, and -
+        #only works with binary operators +, *, / and -
+        #and cosine, and the constant pi
         def expr_print(exp):
             if type(exp) in (str, int, float):
+                if exp == math.pi:
+                    return "pi"
                 return str(exp)
             if exp[0] == add:
                 return "("+expr_print(exp[1])+"+"+expr_print(exp[2])+")"
@@ -145,16 +163,21 @@ class Test(unittest.TestCase):
                 return "("+expr_print(exp[1])+"*"+expr_print(exp[2])+")"
             if exp[0] == sub:
                 return "("+expr_print(exp[1])+"-"+expr_print(exp[2])+")"
+            if exp[0] == div:
+                return "("+expr_print(exp[1])+"/"+expr_print(exp[2])+")"
+            if exp[0] == cos:
+                return "cos("+expr_print(exp[1])+")"
         
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=100,
+            pop_size=100000,
             init_max_depth=4,
             crossover_rate=0.9,
-            selection_cutoff=0.5)
+            selection_cutoff=2,
+            verbose=True)
         
         x1=[]
         y1=[]
@@ -162,11 +185,11 @@ class Test(unittest.TestCase):
         y2=[]
         
         
-        for x in (i/10 for i in range(-10,10)):
+        for x in (i/10 for i in r):
             x1.append(x)
             y1.append(goal(x))
         
-        for x in (i/10 for i in range(-10,10)):
+        for x in (i/100 for i in range(-100,100,1)):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 
@@ -180,7 +203,9 @@ class Test(unittest.TestCase):
         #print("PI = ", interpreter.interpret(solution))
         #print(max_depth(solution))
         interpreter.graphprint(solution, "sol.gv")
+        print()
         print(expr_print(solution))
+        print()
         from sympy import sympify
         print(sympify(expr_print(solution)).expand().simplify())
         interpreter.asciiprint(solution)

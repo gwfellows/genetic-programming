@@ -37,11 +37,14 @@ def asciiprint(exp):
                 ))
     return _asciiprint(exp, indent=0)
 
+def _handle(t):
+    return t() if callable(t) else t
+    
 def randexp(F, T, maxdepth=5):
     U = list(F.union(T))
     def _randexp(atom, depth=2):
         if atom in T:
-            return atom
+            return _handle(atom)
         if atom in F:
             return (atom, *[_randexp(
                 random.choice(U) if depth<maxdepth else random.choice(list(T)), depth+1
@@ -136,7 +139,7 @@ def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=1
     xs = []
     ys = []
     
-    for _ in range(500):
+    for _ in range(50000):
         try:
             fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
             xs.append(_)
