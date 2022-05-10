@@ -1,6 +1,9 @@
 import interpreter
 import math
 
+#damped oscillator
+#adjust timeline
+
 def add(a, b):
     return a+b;
 
@@ -128,17 +131,33 @@ class Test(unittest.TestCase):
         #goal = lambda x: x%1
         #goal = lambda x: math.log(x+1.1)
         
+        import csv
+
+        data = []
+        
+        with open('pop_size.csv', mode='r') as d:
+            reader = csv.reader(d)
+            data = [(float(rows[0]),float(rows[1])) for rows in reader]
+
         def max_depth(exp, d=0):
             return max(map(lambda i: max_depth(i,d+1),exp)) if type(exp) in (tuple, list) else d
         
-        r = range(-10,10,1)
+        #r = range(-10,10,1)
         
-        def score(exp):
+        '''def score(exp):
             fitness = 0
             for x in (i/10 for i in r):
                 fitness += abs(
                     interpreter.interpret(exp, {'X':x}) 
                     - (goal(x)))
+            return fitness+0.01*max_depth(exp)'''
+        
+        def score(exp):
+            fitness = 0
+            for pair in data:
+                x = pair[0]
+                y = pair[1]
+                fitness += abs(interpreter.interpret(exp, {'X':x}) - y)
             return fitness+0.01*max_depth(exp)
         
         import random
@@ -146,8 +165,8 @@ class Test(unittest.TestCase):
         def randnum():
             return random.random()*2-1
             
-        FUNCTIONS = {add, mul,sub,div}
-        TERMINALS = {1,'X'}
+        FUNCTIONS = {add, mul}
+        TERMINALS = {randnum,'X'}
         
         #print a tree as a expression
         #only works with binary operators +, *, / and -
@@ -173,7 +192,7 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=100000,
+            pop_size=300,
             init_max_depth=4,
             crossover_rate=0.9,
             selection_cutoff=2,
@@ -185,11 +204,11 @@ class Test(unittest.TestCase):
         y2=[]
         
         
-        for x in (i/10 for i in r):
-            x1.append(x)
-            y1.append(goal(x))
+        for pair in data:
+            x1.append(pair[0])
+            y1.append(pair[1])
         
-        for x in (i/100 for i in range(-100,100,1)):
+        for x in range(0,5000):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 

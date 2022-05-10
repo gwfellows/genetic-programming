@@ -1,0 +1,7 @@
+0.004825432788723363*X + 0.4944716491896169
+
+fit for pop size data
+works best with +, - and randnum
+
+-----
+
