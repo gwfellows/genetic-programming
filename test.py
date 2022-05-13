@@ -165,7 +165,7 @@ class Test(unittest.TestCase):
         def randnum():
             return random.random()*2-1
             
-        FUNCTIONS = {add, mul}
+        FUNCTIONS = {add, mul, ln}
         TERMINALS = {randnum,'X'}
         
         #print a tree as a expression
@@ -186,6 +186,8 @@ class Test(unittest.TestCase):
                 return "("+expr_print(exp[1])+"/"+expr_print(exp[2])+")"
             if exp[0] == cos:
                 return "cos("+expr_print(exp[1])+")"
+            if exp[0] == ln:
+                return "ln("+expr_print(exp[1])+")"
         
         
         solution = interpreter.evolve(
@@ -208,7 +210,7 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(0,5000):
+        for x in range(0,36):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 
