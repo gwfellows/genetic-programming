@@ -135,12 +135,12 @@ class Test(unittest.TestCase):
 
         data = []
         
-        with open('pop_size.csv', mode='r') as d:
+        with open('data.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
-        def max_depth(exp, d=0):
-            return max(map(lambda i: max_depth(i,d+1),exp)) if type(exp) in (tuple, list) else d
+        def n_nodes(exp, d=0):
+            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else 1
         
         #r = range(-10,10,1)
         
@@ -158,7 +158,7 @@ class Test(unittest.TestCase):
                 x = pair[0]
                 y = pair[1]
                 fitness += abs(interpreter.interpret(exp, {'X':x}) - y)
-            return fitness+0.01*max_depth(exp)
+            return fitness+0.01*n_nodes(exp)
         
         import random
         
