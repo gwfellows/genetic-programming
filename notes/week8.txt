@@ -1,0 +1,49 @@
+==============
+FUNCTION TYPES
+==============
+
+exponential
+--------------
+
+f(x) = a * b^x + c
+
+constant common multiple
+
+linear
+--------------
+
+f(x) = a*x + b
+
+constant common difference
+
+logarithmic
+--------------
+
+f(x) = a * ln(x-b) + c
+
+constant common difference of ((x, e^y) for (x,y) in data)
+
+constant
+--------------
+
+f(x) = a
+
+constant
+
+inverse
+--------------
+
+f(x) = a/(x-b) + c
+
+constant common difference of ((x, y*x) for (x,y) in data)
+
+polynomial
+--------------
+
+f(x) = a + b*x + c*x^2
+f(x) = a + b*x + c*x^2 + d*x^2
+
+sin/cos
+--------------
+
+f(x) = a*sin(b*(x-c)) + d
