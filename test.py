@@ -4,6 +4,24 @@ import math
 #damped oscillator
 #adjust timeline
 
+
+'''
+find test cases for each of several equation 'types'
+lots/little noise
+- linear
+- polynomial
+- exponential
+- etc..
+
+try to tune for each
+
+think about:
+- weighting functions by probability
+- incentivizing flat residual curves
+- finding functions with the right shape that are in the wrong place
+- using common equation forms as starterss
+'''
+
 def add(a, b):
     return a+b;
 
@@ -158,15 +176,15 @@ class Test(unittest.TestCase):
                 x = pair[0]
                 y = pair[1]
                 fitness += abs(interpreter.interpret(exp, {'X':x}) - y)
-            return fitness+0.01*n_nodes(exp)
+            return fitness+0.1*n_nodes(exp)
         
         import random
         
         def randnum():
             return random.random()*2-1
             
-        FUNCTIONS = {add, mul, ln}
-        TERMINALS = {randnum,'X'}
+        FUNCTIONS = {add, mul, sub}
+        TERMINALS = {'X',1,2}
         
         #print a tree as a expression
         #only works with binary operators +, *, / and -
@@ -194,10 +212,10 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=300,
-            init_max_depth=4,
+            pop_size=100,
+            init_max_depth=3,
             crossover_rate=0.9,
-            selection_cutoff=2,
+            selection_cutoff=0.7,
             verbose=True)
         
         x1=[]
