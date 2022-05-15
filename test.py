@@ -41,7 +41,7 @@ def sqrt(a):
         return 0
     return math.sqrt(a)
 
-def exp(a,b):
+def power(a,b):
     a, b = float(a), float(b)
     if a<=0:
         return 0
@@ -148,12 +148,12 @@ class Test(unittest.TestCase):
 
         data = []
         
-        with open('./test_datasets/logdata.csv', mode='r') as d:
+        with open('./test_datasets/transistors-per-microprocessor.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
         def n_nodes(exp, d=0):
-            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else (10 if exp==ln else 0.01)
+            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else (10 if exp==power else 0.01)
         
         #r = range(-10,10,1)
         
@@ -194,6 +194,8 @@ class Test(unittest.TestCase):
                 return "("+expr_print(exp[1])+"-"+expr_print(exp[2])+")"
             if exp[0] == div:
                 return "("+expr_print(exp[1])+"/"+expr_print(exp[2])+")"
+            if exp[0] == power:
+                return "("+expr_print(exp[1])+"**"+expr_print(exp[2])+")"
             if exp[0] == cos:
                 return "cos("+expr_print(exp[1])+")"
             if exp[0] == ln:
@@ -204,6 +206,13 @@ class Test(unittest.TestCase):
             b = random.randint(-100,100)
             c = random.randint(-100,100)
             return [add, [mul, [ln, [add, 'X', a]], b], c]
+        
+        def powerfunc():
+            a = random.random()*10
+            b = random.random()*5
+            c = random.random()*10
+            return [add, [mul, [power, a, 'X'], b], c]
+        
         
         FUNCTIONS = {add,mul}
         TERMINALS = {randnum}
@@ -217,7 +226,7 @@ class Test(unittest.TestCase):
             crossover_rate=0.9,
             selection_cutoff=0.7,
             verbose=True,
-            templates = ((1, 'RANDOM'), (9, lnfunc))
+            templates = ((1, 'RANDOM'), (9, powerfunc))
             )
         
         x1=[]
@@ -230,14 +239,14 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(0,500):
+        for x in range(1971,2017):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 
         
         plt.scatter(x1,y1, color='blue',marker='o')
         plt.plot(x2,y2, color='red', linestyle='--')
-        
+        plt.yscale('log')
         plt.show()
 
         
