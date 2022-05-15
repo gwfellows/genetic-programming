@@ -144,21 +144,16 @@ class Test(unittest.TestCase):
         import math
         import matplotlib.pyplot as plt            
         
-        #goal = lambda x: x**5+x**3+x**2+x+1
-        goal = lambda x: math.sin(x*math.pi)
-        #goal = lambda x: x%1
-        #goal = lambda x: math.log(x+1.1)
-        
         import csv
 
         data = []
         
-        with open('data.csv', mode='r') as d:
+        with open('./test_datasets/logdata.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
         def n_nodes(exp, d=0):
-            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else 1
+            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else (10 if exp==ln else 0.01)
         
         #r = range(-10,10,1)
         
@@ -176,15 +171,12 @@ class Test(unittest.TestCase):
                 x = pair[0]
                 y = pair[1]
                 fitness += abs(interpreter.interpret(exp, {'X':x}) - y)
-            return fitness+0.1*n_nodes(exp)
+            return fitness+1*n_nodes(exp)
         
         import random
         
         def randnum():
             return random.random()*2-1
-            
-        FUNCTIONS = {add, mul, sub}
-        TERMINALS = {'X',1,2}
         
         #print a tree as a expression
         #only works with binary operators +, *, / and -
@@ -207,16 +199,26 @@ class Test(unittest.TestCase):
             if exp[0] == ln:
                 return "ln("+expr_print(exp[1])+")"
         
+        def lnfunc():
+            a = random.randint(-100,100)
+            b = random.randint(-100,100)
+            c = random.randint(-100,100)
+            return [add, [mul, [ln, [add, 'X', a]], b], c]
+        
+        FUNCTIONS = {add,mul}
+        TERMINALS = {randnum}
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=100,
+            pop_size=2000,
             init_max_depth=3,
             crossover_rate=0.9,
             selection_cutoff=0.7,
-            verbose=True)
+            verbose=True,
+            templates = ((1, 'RANDOM'), (9, lnfunc))
+            )
         
         x1=[]
         y1=[]
@@ -228,7 +230,7 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(0,36):
+        for x in range(0,500):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 

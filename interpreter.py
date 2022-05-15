@@ -2,7 +2,7 @@ import random
 import math
 from inspect import signature
 import graphviz
-
+        
 def head(exp):
     return exp[0]
 
@@ -50,6 +50,7 @@ def randexp(F, T, maxdepth=5):
                 random.choice(U) if depth<maxdepth else random.choice(list(T)), depth+1
                 ) for _ in range(nargs(atom))])
     return _randexp(random.choice(list(F)))
+
     
 _count = 0
 def _newname():
@@ -133,9 +134,27 @@ import matplotlib.pyplot as plt
 # attemps to evolve a tree to minimize the value of the fitness function, terminating when the selection cutoff is reached or 500 generations pass
 # note that the selection cutoff uses normalized fitness ( 1/(1+raw fitness) ), so 1 is perfect
 # if "verbose" is True on this will print out it's progress and plot it at the end
-def evolve(functions, terminals, fitness_function, pop_size=50, init_max_depth=10, crossover_rate=0.5, selection_cutoff=0.99, verbose=True):  
-    population = [randexp(functions, terminals, init_max_depth) for _ in range(pop_size)]
+# templates
+def evolve(functions, 
+    terminals, 
+    fitness_function, 
+    pop_size=50, 
+    init_max_depth=10, 
+    crossover_rate=0.5, 
+    selection_cutoff=0.99, 
+    verbose=True,
+    templates=((1, 'RANDOM'),)):  
     
+    names = [t[1] for t in templates]
+    weights = [t[0] for t in templates]
+    population = []
+    for _ in range(pop_size):
+        name = random.choices(names, weights=weights)[0]
+        if name=='RANDOM':
+            population.append(randexp(functions, terminals, init_max_depth))
+        else:
+            population.append(name())
+        
     xs = []
     ys = []
     
