@@ -1,5 +1,6 @@
 import interpreter
 import math
+from inspect import signature
 
 #damped oscillator
 #adjust timeline
@@ -51,6 +52,11 @@ def ln(a):
     if a<=0:
         return 0
     return math.log(a)
+
+def log(a, b):
+    if a<=0 or b<=1:
+        return 0
+    return math.log(a, b)
 
 def cos(a):
     try:
@@ -148,12 +154,12 @@ class Test(unittest.TestCase):
 
         data = []
         
-        with open('./test_datasets/transistors-per-microprocessor.csv', mode='r') as d:
+        with open('./test_datasets/babyheights.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
         def n_nodes(exp, d=0):
-            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else (10 if exp==power else 0.01)
+            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else (10 if exp==log else 0.01)
         
         #r = range(-10,10,1)
         
@@ -198,24 +204,44 @@ class Test(unittest.TestCase):
                 return "("+expr_print(exp[1])+"**"+expr_print(exp[2])+")"
             if exp[0] == cos:
                 return "cos("+expr_print(exp[1])+")"
+            if exp[0] == log:
+                return "log("+expr_print(exp[1])+" , "+expr_print(exp[2])+")"
             if exp[0] == ln:
                 return "ln("+expr_print(exp[1])+")"
+                
+        def nargs(func):
+            return len(signature(func).parameters)
+    
+        def _handle(t):
+            return t() if callable(t) else t
+    
+        def randexp(F, T, maxdepth=5):
+            U = list(F.union(T))
+            def _randexp(atom, depth=2):
+                if atom in T:
+                    return _handle(atom)
+                if atom in F:
+                    return (atom, *[_randexp(
+                        random.choice(U) if depth<maxdepth else random.choice(list(T)), depth+1
+                        ) for _ in range(nargs(atom))])
+            return _randexp(random.choice(list(F)))
+        
+        FUNCTIONS = {add,mul,div}
+        TERMINALS = {randnum}
         
         def lnfunc():
-            a = random.randint(-100,100)
-            b = random.randint(-100,100)
-            c = random.randint(-100,100)
-            return [add, [mul, [ln, [add, 'X', a]], b], c]
+            #a = random.randint(-100,100)
+            #b = random.choice((random.random()*4,1.2359735453245222))#1.040286121772969))
+            #c = random.randint(-100,100)
+            return [add, [log, [add, 'X', randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
         
         def powerfunc():
-            a = random.random()*10
-            b = random.random()*5
+            a = 1.40979
+            b = random.random()*0.00001
             c = random.random()*10
-            return [add, [mul, [power, a, 'X'], b], c]
+            return [mul, [power, a, 'X'], b]
         
         
-        FUNCTIONS = {add,mul}
-        TERMINALS = {randnum}
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
@@ -226,7 +252,7 @@ class Test(unittest.TestCase):
             crossover_rate=0.9,
             selection_cutoff=0.7,
             verbose=True,
-            templates = ((1, 'RANDOM'), (9, powerfunc))
+            templates = ((0, 'RANDOM'), (1, lnfunc))
             )
         
         x1=[]
@@ -239,14 +265,14 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(1971,2017):
+        for x in range(0,12*3):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 
         
         plt.scatter(x1,y1, color='blue',marker='o')
         plt.plot(x2,y2, color='red', linestyle='--')
-        plt.yscale('log')
+        #plt.yscale('log')
         plt.show()
 
         
