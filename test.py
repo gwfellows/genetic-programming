@@ -24,16 +24,25 @@ think about:
 '''
 
 def add(a, b):
-    return a+b;
+    ret = a+b
+    if math.isnan(ret):
+        return 0
+    return ret;
 
 def sub(a, b):
     return a-b;
 
 def mul(a, b):
+    ret = a*b
+    if math.isnan(ret):
+        return 0
     return a*b;
 
 def div(a, b):
     if b==0:
+        return 0
+    ret = a/b
+    if math.isnan(ret):
         return 0
     return a/b
 
@@ -46,7 +55,10 @@ def power(a,b):
     a, b = float(a), float(b)
     if a<=0:
         return 0
-    return a**b;
+    ret = a**b
+    if math.isnan(ret):
+        return 0
+    return ret
 
 def ln(a):
     if a<=0:
@@ -54,8 +66,8 @@ def ln(a):
     return math.log(a)
 
 def log(a, b):
-    if a<=0 or b<=1:
-        return 0
+    if (a<=0) or (b<=1):
+        return -1000000
     return math.log(a, b)
 
 def cos(a):
@@ -154,12 +166,12 @@ class Test(unittest.TestCase):
 
         data = []
         
-        with open('./test_datasets/babyheights.csv', mode='r') as d:
+        with open('./test_datasets/logdata.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
         def n_nodes(exp, d=0):
-            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else (10 if exp==log else 0.01)
+            return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else 1
         
         #r = range(-10,10,1)
         
@@ -177,7 +189,7 @@ class Test(unittest.TestCase):
                 x = pair[0]
                 y = pair[1]
                 fitness += abs(interpreter.interpret(exp, {'X':x}) - y)
-            return fitness+1*n_nodes(exp)
+            return fitness+0.1*n_nodes(exp)
         
         import random
         
@@ -230,16 +242,10 @@ class Test(unittest.TestCase):
         TERMINALS = {randnum}
         
         def lnfunc():
-            #a = random.randint(-100,100)
-            #b = random.choice((random.random()*4,1.2359735453245222))#1.040286121772969))
-            #c = random.randint(-100,100)
             return [add, [log, [add, 'X', randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
         
         def powerfunc():
-            a = 1.40979
-            b = random.random()*0.00001
-            c = random.random()*10
-            return [mul, [power, a, 'X'], b]
+            return [add, [mul, [power, randexp(FUNCTIONS,TERMINALS,5), 'X'], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
         
         
         
@@ -247,7 +253,7 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=2000,
+            pop_size=20000,
             init_max_depth=3,
             crossover_rate=0.9,
             selection_cutoff=0.7,
@@ -265,7 +271,7 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(0,12*3):
+        for x in range(1971,2017):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 

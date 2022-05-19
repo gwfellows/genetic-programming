@@ -169,6 +169,7 @@ def evolve(functions,
                 break
             new_pop = []
             new_pop.append(population[fitnesses.index(max(fitnesses))])
+            #print(sum(fitnesses))
             while len(new_pop) < pop_size:
                 if random.random()<crossover_rate:
                     for i in crossover(*random.choices(population, weights = fitnesses, k=2)):
