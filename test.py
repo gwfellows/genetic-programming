@@ -166,7 +166,7 @@ class Test(unittest.TestCase):
 
         data = []
         
-        with open('./test_datasets/logdata.csv', mode='r') as d:
+        with open('./test_datasets/transistors-per-microprocessor.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
@@ -239,7 +239,7 @@ class Test(unittest.TestCase):
             return _randexp(random.choice(list(F)))
         
         FUNCTIONS = {add,mul,div}
-        TERMINALS = {randnum}
+        TERMINALS = {randnum,5*10**-294}
         
         def lnfunc():
             return [add, [log, [add, 'X', randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
@@ -253,12 +253,12 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=20000,
+            pop_size=10000,
             init_max_depth=3,
             crossover_rate=0.9,
             selection_cutoff=0.7,
             verbose=True,
-            templates = ((0, 'RANDOM'), (1, lnfunc))
+            templates = ((0, 'RANDOM'), (1, powerfunc))
             )
         
         x1=[]
