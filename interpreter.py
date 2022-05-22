@@ -24,6 +24,34 @@ def interpret(exp, definitions=None):
     except OverflowError:
         return 0
 
+def _simplify(exp):
+    if (type(exp) in (int,str,float)):
+        return exp
+    if all((type(i) in (str,int,float)) for i in tail(exp)) and any((type(i) is str) for i in tail(exp)):
+        return exp
+    try:
+        return head(exp)(
+            *map(simplify, tail(exp))
+            )
+    except OverflowError:
+        return 0
+
+def wrapper(func):
+    def newfunc(*args):
+        if any(type(i) not in (int,float) for i in args):
+            return [func,*args]
+        return func(*args)
+        
+    return newfunc
+    
+def simplify(exp):
+    if type(exp) in (tuple,list):
+        return wrapper(head(exp))(
+            *map(simplify, tail(exp))
+            )
+    else:
+        return exp
+
 def asciiprint(exp):
     def _asciiprint(exp, indent=0):
         if (type(exp) is int) or (type(exp) is float) or (type(exp) is str):

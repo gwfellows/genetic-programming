@@ -189,7 +189,7 @@ class Test(unittest.TestCase):
                 x = pair[0]
                 y = pair[1]
                 fitness += abs(interpreter.interpret(exp, {'X':x}) - y)
-            return fitness+0.1*n_nodes(exp)
+            return fitness+1*n_nodes(exp)
         
         import random
         
@@ -288,8 +288,12 @@ class Test(unittest.TestCase):
         print()
         print(expr_print(solution))
         print()
-        from sympy import sympify
-        print(sympify(expr_print(solution)).expand().simplify())
+        print()
+        print(expr_print(interpreter.simplify(solution)))
+        print()
+        from sympy import latex, sympify
+        
+        print(latex(sympify(expr_print(interpreter.simplify(solution))).expand().simplify()))
         interpreter.asciiprint(solution)
     
 
