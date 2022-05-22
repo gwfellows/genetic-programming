@@ -54,10 +54,10 @@ def sqrt(a):
 def power(a,b):
     a, b = float(a), float(b)
     if a<=0:
-        return -1000
+        return -10*10**100
     ret = a**b
     if math.isnan(ret):
-        return -1000
+        return -10*10**100
     return ret
 
 def ln(a):
@@ -166,7 +166,7 @@ class Test(unittest.TestCase):
 
         data = []
         
-        with open('./test_datasets/transistors-per-microprocessor.csv', mode='r') as d:
+        with open('./test_datasets/log10 transistors-per-microprocessor.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
@@ -213,7 +213,7 @@ class Test(unittest.TestCase):
             if exp[0] == div:
                 return "("+expr_print(exp[1])+"/"+expr_print(exp[2])+")"
             if exp[0] == power:
-                return "("+expr_print(exp[1])+"**"+expr_print(exp[2])+")"
+                return "("+expr_print(exp[1])+"^{"+expr_print(exp[2])+"})"
             if exp[0] == cos:
                 return "cos("+expr_print(exp[1])+")"
             if exp[0] == log:
@@ -238,7 +238,7 @@ class Test(unittest.TestCase):
                         ) for _ in range(nargs(atom))])
             return _randexp(random.choice(list(F)))
         
-        FUNCTIONS = {add,mul,div,power}
+        FUNCTIONS = {add,mul,div}
         TERMINALS = {randnum}
         
         def lnfunc():
@@ -247,18 +247,21 @@ class Test(unittest.TestCase):
         def powerfunc():
             return [add, [mul, [power, randexp(FUNCTIONS,TERMINALS,5), 'X'], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
         
+        def linearfunc():
+            return [add, [mul, randexp(FUNCTIONS,TERMINALS,5), 'X'], randexp(FUNCTIONS,TERMINALS,5)]
+        
         
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=100,
+            pop_size=1000,
             init_max_depth=3,
             crossover_rate=0.9,
             selection_cutoff=0.7,
             verbose=True,
-            templates = ((0, 'RANDOM'), (1, powerfunc))
+            templates = ((0, 'RANDOM'), (1, linearfunc))
             )
         
         x1=[]
@@ -291,10 +294,11 @@ class Test(unittest.TestCase):
         print()
         print(expr_print(interpreter.simplify(solution)))
         print()
-        from sympy import latex, sympify
+        '''from sympy import latex, sympify
         
         print(latex(sympify(expr_print(interpreter.simplify(solution))).expand().simplify()))
         interpreter.asciiprint(solution)
+        '''
     
 
 if __name__ == '__main__':
