@@ -54,10 +54,10 @@ def sqrt(a):
 def power(a,b):
     a, b = float(a), float(b)
     if a<=0:
-        return 0
+        return -1000
     ret = a**b
     if math.isnan(ret):
-        return 0
+        return -1000
     return ret
 
 def ln(a):
@@ -194,7 +194,7 @@ class Test(unittest.TestCase):
         import random
         
         def randnum():
-            return random.random()*2-1
+            return random.random()*4-2
         
         #print a tree as a expression
         #only works with binary operators +, *, / and -
@@ -238,8 +238,8 @@ class Test(unittest.TestCase):
                         ) for _ in range(nargs(atom))])
             return _randexp(random.choice(list(F)))
         
-        FUNCTIONS = {add,mul,div}
-        TERMINALS = {randnum,5*10**-294}
+        FUNCTIONS = {add,mul,div,power}
+        TERMINALS = {randnum}
         
         def lnfunc():
             return [add, [log, [add, 'X', randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
@@ -253,7 +253,7 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=10000,
+            pop_size=100,
             init_max_depth=3,
             crossover_rate=0.9,
             selection_cutoff=0.7,
