@@ -204,15 +204,13 @@ def evolve(functions,
             new_pop.append(population[fitnesses.index(max(fitnesses))])
             #print(sum(fitnesses))
             while len(new_pop) < pop_size:
-                if random.random()<mutation_rate:
-                    new_pop.append(mutate(random.choices(population, weights = fitnesses, k=1)[0],functions,terminals))
-                else:
-                    new_pop.append(*random.choices(population, weights = fitnesses, k=1))
-                    
-                if random.random()<crossover_rate:
-                    #new_pop.append(simplify(random.choices(population, weights = fitnesses, k=1)[0]))
-                    for i in crossover(*random.choices(population, weights = fitnesses, k=2)):
-                        new_pop.append(i)
+                rand = random.random()
+                if rand<(mutation_rate+crossover_rate):
+                    if random.random()<(mutation_rate/(mutation_rate+crossover_rate)):
+                        new_pop.append(mutate(random.choices(population, weights = fitnesses, k=1)[0],functions,terminals))
+                    else:
+                        for i in crossover(*random.choices(population, weights = fitnesses, k=2)):
+                            new_pop.append(i)
                 else:
                     new_pop.append(*random.choices(population, weights = fitnesses, k=1))
             population = new_pop

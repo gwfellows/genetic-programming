@@ -272,11 +272,11 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=100,
+            pop_size=500,
             init_max_depth=3,
-            crossover_rate=0.9,
+            crossover_rate=0.7,
             selection_cutoff=0.7,
-            mutation_rate=0.9,
+            mutation_rate=0.2,
             verbose=True,
             templates = ((0, 'RANDOM'), (1, linearfunc))
             )
