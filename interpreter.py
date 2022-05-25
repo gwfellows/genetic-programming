@@ -156,6 +156,9 @@ def crossover(exp1, exp2):
     exp2 = with_subindex(exp2, sub_2, access_subindex(oldexp1, sub_1))
     return exp1, exp2
 
+def mutate(exp,F,T):
+    return with_subindex(exp, random_subindex(exp), randexp(F,T,3))
+
 import matplotlib.pyplot as plt
 
 # the main evolution loop
@@ -171,7 +174,9 @@ def evolve(functions,
     crossover_rate=0.5, 
     selection_cutoff=0.99, 
     verbose=True,
+    mutation_rate=0,
     templates=((1, 'RANDOM'),)):  
+
     
     names = [t[1] for t in templates]
     weights = [t[0] for t in templates]
@@ -199,6 +204,11 @@ def evolve(functions,
             new_pop.append(population[fitnesses.index(max(fitnesses))])
             #print(sum(fitnesses))
             while len(new_pop) < pop_size:
+                if random.random()<mutation_rate:
+                    new_pop.append(mutate(random.choices(population, weights = fitnesses, k=1)[0],functions,terminals))
+                else:
+                    new_pop.append(*random.choices(population, weights = fitnesses, k=1))
+                    
                 if random.random()<crossover_rate:
                     #new_pop.append(simplify(random.choices(population, weights = fitnesses, k=1)[0]))
                     for i in crossover(*random.choices(population, weights = fitnesses, k=2)):

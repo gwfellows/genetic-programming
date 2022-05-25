@@ -60,6 +60,9 @@ def power(a,b):
         return -10*10**100
     return ret
 
+def squared(a):
+    return power(a,2)
+
 def ln(a):
     if a<=0:
         return 0
@@ -165,7 +168,7 @@ class Test(unittest.TestCase):
         import csv
 
         data = []
-        
+        #log10 transistors-per-microprocessor
         with open('./test_datasets/log10 transistors-per-microprocessor.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
@@ -189,7 +192,7 @@ class Test(unittest.TestCase):
                 x = pair[0]
                 y = pair[1]
                 fitness += abs(interpreter.interpret(exp, {'X':x}) - y)
-            return fitness+1*n_nodes(exp)
+            return fitness+0.1*n_nodes(exp)
         
         import random
         
@@ -203,6 +206,8 @@ class Test(unittest.TestCase):
             if type(exp) in (str, int, float):
                 if exp == math.pi:
                     return "pi"
+                if "e" in str(exp):
+                    exp = str(exp).replace("e","*10^{")+"}"
                 return str(exp)
             if exp[0] == add:
                 return "("+expr_print(exp[1])+"+"+expr_print(exp[2])+")"
@@ -220,6 +225,8 @@ class Test(unittest.TestCase):
                 return "log("+expr_print(exp[1])+" , "+expr_print(exp[2])+")"
             if exp[0] == ln:
                 return "ln("+expr_print(exp[1])+")"
+            if exp[0] == squared:
+                return "("+expr_print(exp[1])+"^{2})"
                 
         def nargs(func):
             return len(signature(func).parameters)
@@ -248,18 +255,28 @@ class Test(unittest.TestCase):
             return [add, [mul, [power, randexp(FUNCTIONS,TERMINALS,5), 'X'], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
         
         def linearfunc():
-            return [add, [mul, randexp(FUNCTIONS,TERMINALS,5), 'X'], randexp(FUNCTIONS,TERMINALS,5)]
+            return [add, [mul, randexp(FUNCTIONS,TERMINALS,3), 'X'], randexp(FUNCTIONS,TERMINALS,3)]
         
+        def poly2func():
+            return [add, linearfunc(), [mul, randexp(FUNCTIONS,TERMINALS,5), [mul, 'X', 'X']]]
         
+        def poly3func():
+            return [add, poly2func(), [mul, randexp(FUNCTIONS,TERMINALS,5), [mul, [mul, 'X', 'X'],'X']]]
+        
+        def poly4func():
+            return [add, poly3func(), [mul, randexp(FUNCTIONS,TERMINALS,5), [mul, [mul, [mul, 'X', 'X'],'X'],'X']]]
+        
+        #evolve vectors for function types
         
         solution = interpreter.evolve(
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=1000,
+            pop_size=100,
             init_max_depth=3,
             crossover_rate=0.9,
             selection_cutoff=0.7,
+            mutation_rate=0.9,
             verbose=True,
             templates = ((0, 'RANDOM'), (1, linearfunc))
             )
@@ -274,7 +291,7 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(1971,2017):
+        for x in range(1,15):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 
@@ -294,11 +311,12 @@ class Test(unittest.TestCase):
         print()
         print(expr_print(interpreter.simplify(solution)))
         print()
-        '''from sympy import latex, sympify
+        
+        from sympy import latex, sympify
         
         print(latex(sympify(expr_print(interpreter.simplify(solution))).expand().simplify()))
         interpreter.asciiprint(solution)
-        '''
+        
     
 
 if __name__ == '__main__':
