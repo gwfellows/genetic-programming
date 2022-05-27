@@ -172,7 +172,19 @@ class Test(unittest.TestCase):
         with open('./test_datasets/log10 transistors-per-microprocessor.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
+        
 
+        def get_differences(data):
+            diffs = []
+            for i in range(1,len(data)):
+                x = data[i][0]
+                y = (data[i][1]-data[i-1][1])/(data[i][0]-data[i-1][0])
+                diffs.append([x,y])
+            return diffs
+        
+        data_diffs = get_differences(data)
+        
+    
         def n_nodes(exp, d=0):
             return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else 1
         
@@ -188,11 +200,17 @@ class Test(unittest.TestCase):
         
         def score(exp):
             fitness = 0
-            for pair in data:
-                x = pair[0]
-                y = pair[1]
-                fitness += abs(interpreter.interpret(exp, {'X':x}) - y)
-            return fitness+0.1*n_nodes(exp)
+            
+            data_to_score = [[pair[0],interpreter.interpret(exp, {'X':pair[0]})] for pair in data]
+            diffs_to_score = get_differences(data_to_score)
+            
+            for i, pair in enumerate(data_to_score):
+                fitness += 0.00*abs(data_to_score[i][1]-data[i][1])
+                
+            for i, pair in enumerate(diffs_to_score):
+                fitness += 10*abs(diffs_to_score[i][1]-data_diffs[i][1])
+            
+            return fitness+0.01*n_nodes(exp)
         
         import random
         
@@ -246,7 +264,7 @@ class Test(unittest.TestCase):
             return _randexp(random.choice(list(F)))
         
         FUNCTIONS = {add,mul,div}
-        TERMINALS = {randnum}
+        TERMINALS = {randnum,100}
         
         def lnfunc():
             return [add, [log, [add, 'X', randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
@@ -272,11 +290,11 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=500,
+            pop_size=100,
             init_max_depth=3,
-            crossover_rate=0.7,
+            crossover_rate=0.3,
             selection_cutoff=0.7,
-            mutation_rate=0.2,
+            mutation_rate=0.6,
             verbose=True,
             templates = ((0, 'RANDOM'), (1, linearfunc))
             )
@@ -291,7 +309,7 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(1,15):
+        for x in range(0,37):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 
