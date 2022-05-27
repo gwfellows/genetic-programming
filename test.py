@@ -25,7 +25,7 @@ think about:
 
 def add(a, b):
     ret = a+b
-    if math.isnan(ret):
+    if math.isnan(ret) or math.isinf(ret):
         return 0
     return ret;
 
@@ -34,7 +34,7 @@ def sub(a, b):
 
 def mul(a, b):
     ret = a*b
-    if math.isnan(ret):
+    if math.isnan(ret) or math.isinf(ret):
         return 0
     return a*b;
 
@@ -42,7 +42,7 @@ def div(a, b):
     if b==0:
         return 0
     ret = a/b
-    if math.isnan(ret):
+    if math.isnan(ret) or math.isinf(ret):
         return 0
     return a/b
 
@@ -54,10 +54,10 @@ def sqrt(a):
 def power(a,b):
     a, b = float(a), float(b)
     if a<=0:
-        return -10*10**100
+        return 0
     ret = a**b
-    if math.isnan(ret):
-        return -10*10**100
+    if math.isnan(ret) or math.isinf(ret):
+        return 0
     return ret
 
 def squared(a):
@@ -169,7 +169,7 @@ class Test(unittest.TestCase):
 
         data = []
         #log10 transistors-per-microprocessor
-        with open('./test_datasets/log10 transistors-per-microprocessor.csv', mode='r') as d:
+        with open('./test_datasets/transistors-per-microprocessor.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
         
@@ -203,12 +203,12 @@ class Test(unittest.TestCase):
             
             data_to_score = [[pair[0],interpreter.interpret(exp, {'X':pair[0]})] for pair in data]
             diffs_to_score = get_differences(data_to_score)
-            
+            '''
             for i, pair in enumerate(data_to_score):
-                fitness += 0.00*abs(data_to_score[i][1]-data[i][1])
+                fitness += 0.00*abs(data_to_score[i][1]-data[i][1])'''
                 
             for i, pair in enumerate(diffs_to_score):
-                fitness += 10*abs(diffs_to_score[i][1]-data_diffs[i][1])
+                fitness += abs(diffs_to_score[i][1]-data_diffs[i][1])
             
             return fitness+0.01*n_nodes(exp)
         
@@ -263,17 +263,17 @@ class Test(unittest.TestCase):
                         ) for _ in range(nargs(atom))])
             return _randexp(random.choice(list(F)))
         
-        FUNCTIONS = {add,mul,div}
-        TERMINALS = {randnum,100}
+        FUNCTIONS = {add,mul,div,power}
+        TERMINALS = {randnum,100,10**-100}
         
         def lnfunc():
             return [add, [log, [add, 'X', randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
         
         def powerfunc():
-            return [add, [mul, [power, randexp(FUNCTIONS,TERMINALS,5), 'X'], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
+            return [mul, [power, randexp(FUNCTIONS,TERMINALS,2), 'X'], randexp(FUNCTIONS,TERMINALS,2)]
         
         def linearfunc():
-            return [add, [mul, randexp(FUNCTIONS,TERMINALS,3), 'X'], randexp(FUNCTIONS,TERMINALS,3)]
+            return [mul, randexp(FUNCTIONS,TERMINALS,3), 'X']
         
         def poly2func():
             return [add, linearfunc(), [mul, randexp(FUNCTIONS,TERMINALS,5), [mul, 'X', 'X']]]
@@ -290,13 +290,13 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=100,
+            pop_size=100_000,
             init_max_depth=3,
-            crossover_rate=0.3,
+            crossover_rate=0.8,
             selection_cutoff=0.7,
-            mutation_rate=0.6,
+            mutation_rate=0.0,
             verbose=True,
-            templates = ((0, 'RANDOM'), (1, linearfunc))
+            templates = ((0, 'RANDOM'), (1, powerfunc))
             )
         
         x1=[]
@@ -309,7 +309,7 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(0,37):
+        for x in range(1970,2022):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 
