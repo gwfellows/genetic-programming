@@ -170,7 +170,7 @@ class Test(unittest.TestCase):
 
         data = []
         #log10 transistors-per-microprocessor
-        with open('./test_datasets/log10 transistors-per-microprocessor.csv', mode='r') as d:
+        with open('./test_datasets/babyheights.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
@@ -281,13 +281,41 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=200,
+            pop_size=100,
             init_max_depth=3,
             crossover_rate=0.8,
-            selection_cutoff=0.6,
+            selection_cutoff=0.2,
             mutation_rate=0.1,
             verbose=True,
-            templates = ((0, 'RANDOM'), (1, poly4func))
+            templates = ((0, 'RANDOM'), (1, lnfunc))
+            )
+        
+        print("---")
+        
+        #use NRMSE
+        data_mean = statistics.mean(row[1] for row in data)
+        
+        def score(exp):
+            square_errors = []
+            
+            data_to_score = [[pair[0],interpreter.interpret(exp, {'X':pair[0]})] for pair in data]
+                
+            for i, pair in enumerate(data_to_score):
+                square_errors.append((data_to_score[i][1]-data[i][1])**2)
+                
+            return math.sqrt(statistics.mean(square_errors))/data_mean + 0.01*n_nodes(exp)
+            
+        C = interpreter.evolve(
+            functions={add,mul,sub,div},
+            terminals={randnum,1},
+            fitness_function = lambda exp: score([add,exp,solution]),
+            pop_size=100,
+            init_max_depth=3,
+            crossover_rate=0.8,
+            selection_cutoff=0.2,
+            mutation_rate=0.1,
+            verbose=True,
+            templates = ((1, 'RANDOM'),)
             )
         
         x1=[]
@@ -300,9 +328,9 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(0,16):
+        for x in range(0,37):
             x2.append(x)
-            y2.append(interpreter.interpret(solution, {'X':x}))
+            y2.append(interpreter.interpret([add,solution,C], {'X':x}))
 
         
         plt.scatter(x1,y1, color='blue',marker='o')
@@ -313,23 +341,24 @@ class Test(unittest.TestCase):
         
         #print("PI = ", interpreter.interpret(solution))
         #print(max_depth(solution))
-        interpreter.graphprint(solution, "sol.gv")
+        interpreter.graphprint([add,solution,C], "sol.gv")
         print()
-        print(expr_print(solution))
+        print(expr_print([add,solution,C]))
         print()
         print()
-        print(expr_print(interpreter.simplify(solution)))
+        print(expr_print(interpreter.simplify([add,solution,C])))
         print()
         
         from sympy import latex, sympify
         
-        print(latex(sympify(expr_print(interpreter.simplify(solution))).expand().simplify()))
-        interpreter.asciiprint(solution)
+        print(latex(sympify(expr_print(interpreter.simplify([add,solution,C]))).expand().simplify()))
         
     
 
 if __name__ == '__main__':
     unittest.main()
+
+#0.3371227270112964 X + 11.10095240393376 \log{\left(X + 1.9038478537754524 \right)} + 42.95437418392193
 
 #logistic curves
 '''
