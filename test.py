@@ -170,7 +170,7 @@ class Test(unittest.TestCase):
 
         data = []
         #log10 transistors-per-microprocessor
-        with open('./test_datasets/babyheights.csv', mode='r') as d:
+        with open('./test_datasets/polynomial.txt', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
 
@@ -201,7 +201,7 @@ class Test(unittest.TestCase):
             for i, pair in enumerate(diffs_to_score):
                 square_errors.append((diffs_to_score[i][1]-data_diffs[i][1])**2)
                 
-            return math.sqrt(statistics.mean(square_errors))/data_diffs_mean + 0.01*n_nodes(exp)
+            return math.sqrt(statistics.mean(square_errors))/data_diffs_mean + 0.001*n_nodes(exp)
         
         import random
         
@@ -287,7 +287,7 @@ class Test(unittest.TestCase):
             selection_cutoff=0.2,
             mutation_rate=0.1,
             verbose=True,
-            templates = ((0, 'RANDOM'), (1, lnfunc))
+            templates = ((0, 'RANDOM'), (1, poly4func))
             )
         
         print("---")
@@ -359,7 +359,7 @@ if __name__ == '__main__':
     unittest.main()
 
 #0.3371227270112964 X + 11.10095240393376 \log{\left(X + 1.9038478537754524 \right)} + 42.95437418392193
-
+#- 0.015400722326537062 X^{4} + 0.58683298779939933 X^{3} - 7.1004068081623992 X^{2} + 30.830328731161897 X - 20.806366953841057
 #logistic curves
 '''
 X \left(0.00067151805666508732 X^{5} - 0.032360861953569867 X^{4} + 0.58098621326037945 X^{3} - 4.6483746456198377 X^{2} + 15.03502728428022 X - 9.3563119247896713\right)'''
