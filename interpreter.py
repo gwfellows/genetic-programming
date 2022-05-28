@@ -195,10 +195,10 @@ def evolve(functions,
         try:
             fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
             xs.append(_)
-            ys.append(max(fitnesses))
+            ys.append(1/(max(fitnesses))-1)
             if verbose and _%100==0:
-                print(_, max(fitnesses))
-            if max(fitnesses)>selection_cutoff:
+                print(_, 1/(max(fitnesses))-1)
+            if 1/(max(fitnesses))-1 < selection_cutoff:
                 break
             new_pop = []
             new_pop.append(population[fitnesses.index(max(fitnesses))])
@@ -225,6 +225,7 @@ def evolve(functions,
         ax.grid()
 
         fig.savefig("test.png")
+        plt.yscale('log')
         plt.show()
     
     #print(fitnesses.index(max(fitnesses)))

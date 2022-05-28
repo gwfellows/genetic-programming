@@ -164,15 +164,15 @@ class Test(unittest.TestCase):
     def test_evolve(self):
         import math
         import matplotlib.pyplot as plt            
+        import statistics
         
         import csv
 
         data = []
         #log10 transistors-per-microprocessor
-        with open('./test_datasets/polynomial.txt', mode='r') as d:
+        with open('./test_datasets/log10 transistors-per-microprocessor.csv', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
-        
 
         def get_differences(data):
             diffs = []
@@ -181,25 +181,16 @@ class Test(unittest.TestCase):
                 y = (data[i][1]-data[i-1][1])/(data[i][0]-data[i-1][0])
                 diffs.append([x,y])
             return diffs
-        
+            
+        #use NRMSE
         data_diffs = get_differences(data)
+        data_diffs_mean = statistics.mean(row[1] for row in data_diffs)
         
-    
         def n_nodes(exp, d=0):
             return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else 1
         
-        #r = range(-10,10,1)
-        
-        '''def score(exp):
-            fitness = 0
-            for x in (i/10 for i in r):
-                fitness += abs(
-                    interpreter.interpret(exp, {'X':x}) 
-                    - (goal(x)))
-            return fitness+0.01*max_depth(exp)'''
-        
         def score(exp):
-            fitness = 0
+            square_errors = []
             
             data_to_score = [[pair[0],interpreter.interpret(exp, {'X':pair[0]})] for pair in data]
             diffs_to_score = get_differences(data_to_score)
@@ -208,9 +199,9 @@ class Test(unittest.TestCase):
                 fitness += 0.00*abs(data_to_score[i][1]-data[i][1])'''
                 
             for i, pair in enumerate(diffs_to_score):
-                fitness += abs(diffs_to_score[i][1]-data_diffs[i][1])
-            
-            return fitness+0.1*n_nodes(exp)
+                square_errors.append((diffs_to_score[i][1]-data_diffs[i][1])**2)
+                
+            return math.sqrt(statistics.mean(square_errors))/data_diffs_mean + 0.01*n_nodes(exp)
         
         import random
         
@@ -290,10 +281,10 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=5,
+            pop_size=200,
             init_max_depth=3,
             crossover_rate=0.8,
-            selection_cutoff=0.7,
+            selection_cutoff=0.6,
             mutation_rate=0.1,
             verbose=True,
             templates = ((0, 'RANDOM'), (1, poly4func))
@@ -339,3 +330,7 @@ class Test(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+#logistic curves
+'''
+X \left(0.00067151805666508732 X^{5} - 0.032360861953569867 X^{4} + 0.58098621326037945 X^{3} - 4.6483746456198377 X^{2} + 15.03502728428022 X - 9.3563119247896713\right)'''
