@@ -191,12 +191,12 @@ def evolve(functions,
     xs = []
     ys = []
     
-    for _ in range(50000):
+    for _ in range(5000000000):
         try:
             fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
             xs.append(_)
             ys.append(max(fitnesses))
-            if verbose:
+            if verbose and _%100==0:
                 print(_, max(fitnesses))
             if max(fitnesses)>selection_cutoff:
                 break

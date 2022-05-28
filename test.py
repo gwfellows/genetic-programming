@@ -169,7 +169,7 @@ class Test(unittest.TestCase):
 
         data = []
         #log10 transistors-per-microprocessor
-        with open('./test_datasets/transistors-per-microprocessor.csv', mode='r') as d:
+        with open('./test_datasets/polynomial.txt', mode='r') as d:
             reader = csv.reader(d)
             data = [(float(rows[0]),float(rows[1])) for rows in reader]
         
@@ -210,7 +210,7 @@ class Test(unittest.TestCase):
             for i, pair in enumerate(diffs_to_score):
                 fitness += abs(diffs_to_score[i][1]-data_diffs[i][1])
             
-            return fitness+0.01*n_nodes(exp)
+            return fitness+0.1*n_nodes(exp)
         
         import random
         
@@ -263,8 +263,8 @@ class Test(unittest.TestCase):
                         ) for _ in range(nargs(atom))])
             return _randexp(random.choice(list(F)))
         
-        FUNCTIONS = {add,mul,div,power}
-        TERMINALS = {randnum,100,10**-100}
+        FUNCTIONS = {add,mul,sub}
+        TERMINALS = {randnum,1}
         
         def lnfunc():
             return [add, [log, [add, 'X', randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)], randexp(FUNCTIONS,TERMINALS,5)]
@@ -276,13 +276,13 @@ class Test(unittest.TestCase):
             return [mul, randexp(FUNCTIONS,TERMINALS,3), 'X']
         
         def poly2func():
-            return [add, linearfunc(), [mul, randexp(FUNCTIONS,TERMINALS,5), [mul, 'X', 'X']]]
+            return [add, linearfunc(), [mul, randexp(FUNCTIONS,TERMINALS,3), [mul, 'X', 'X']]]
         
         def poly3func():
-            return [add, poly2func(), [mul, randexp(FUNCTIONS,TERMINALS,5), [mul, [mul, 'X', 'X'],'X']]]
+            return [add, poly2func(), [mul, randexp(FUNCTIONS,TERMINALS,3), [mul, [mul, 'X', 'X'],'X']]]
         
         def poly4func():
-            return [add, poly3func(), [mul, randexp(FUNCTIONS,TERMINALS,5), [mul, [mul, [mul, 'X', 'X'],'X'],'X']]]
+            return [add, poly3func(), [mul, randexp(FUNCTIONS,TERMINALS,3), [mul, [mul, [mul, 'X', 'X'],'X'],'X']]]
         
         #evolve vectors for function types
         
@@ -290,13 +290,13 @@ class Test(unittest.TestCase):
             functions=FUNCTIONS,
             terminals=TERMINALS,
             fitness_function = lambda exp: score(exp),
-            pop_size=100_000,
+            pop_size=5,
             init_max_depth=3,
             crossover_rate=0.8,
             selection_cutoff=0.7,
-            mutation_rate=0.0,
+            mutation_rate=0.1,
             verbose=True,
-            templates = ((0, 'RANDOM'), (1, powerfunc))
+            templates = ((0, 'RANDOM'), (1, poly4func))
             )
         
         x1=[]
@@ -309,7 +309,7 @@ class Test(unittest.TestCase):
             x1.append(pair[0])
             y1.append(pair[1])
         
-        for x in range(1970,2022):
+        for x in range(0,16):
             x2.append(x)
             y2.append(interpreter.interpret(solution, {'X':x}))
 
