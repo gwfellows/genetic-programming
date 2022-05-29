@@ -196,7 +196,7 @@ def evolve(functions,
             fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
             xs.append(_)
             ys.append(1/(max(fitnesses))-1)
-            if verbose and _%1==0:
+            if verbose and _%100==0:
                 print(_, 1/(max(fitnesses))-1)
             if (1/(max(fitnesses))-1) < selection_cutoff:
                 break
