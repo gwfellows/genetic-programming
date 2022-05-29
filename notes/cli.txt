@@ -1,0 +1,8 @@
+
+    An argument is a single part of a command line, delimited by blanks.
+    An option is a particular type of argument (or a part of an argument) that can modify the behavior of the command line.
+    A parameter is a particular type of argument that provides additional information to a single option or command.
+
+
+
+symreg -v data.csv

@@ -2,7 +2,7 @@ import random
 import math
 from inspect import signature
 import graphviz
-        
+
 def head(exp):
     return exp[0]
 
@@ -174,6 +174,7 @@ def evolve(functions,
     crossover_rate=0.5, 
     selection_cutoff=0.99, 
     verbose=True,
+    gens_cutoff = 500_000,
     mutation_rate=0,
     templates=((1, 'RANDOM'),)):  
 
@@ -190,14 +191,20 @@ def evolve(functions,
         
     xs = []
     ys = []
-    
-    for _ in range(5000000000):
+    import sys,os
+    for _ in range(gens_cutoff):
         try:
             fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
             xs.append(_)
             ys.append(1/(max(fitnesses))-1)
-            if verbose and _%100==0:
-                print(_, 1/(max(fitnesses))-1)
+            if verbose and _%10==0:
+                os.system("cls")
+                print("matching slope...")
+                print()
+                print("GENERATION   NRMSE")
+                print('{:<12}'.format(_), 1/(max(fitnesses))-1)
+                print()
+                print("CRTL+C to terminate")
             if (1/(max(fitnesses))-1) < selection_cutoff:
                 break
             new_pop = []
