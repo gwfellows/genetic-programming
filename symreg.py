@@ -221,11 +221,13 @@ def nscore(exp):
     square_errors = []
     
     data_to_score = [[pair[0],interpreter.interpret(exp, {'X':pair[0]})] for pair in data]
+    try:
+        for i, pair in enumerate(data_to_score):
+            square_errors.append((data_to_score[i][1]-data[i][1])**2)
+    except OverflowError:
+        return float('inf')
         
-    for i, pair in enumerate(data_to_score):
-        square_errors.append((data_to_score[i][1]-data[i][1])**2)
-        
-    return math.sqrt(statistics.mean(square_errors))/data_mean
+    return math.sqrt(statistics.mean(square_errors))/data_mean + 0.01*n_nodes(exp)
     
 os.system("cls")
 print("matching vertical shift...")
@@ -234,11 +236,11 @@ C = interpreter.evolve(
     functions={add,mul,sub,div,power},
     terminals={randnum,1},
     fitness_function = lambda exp: nscore([add,exp,solution]),
-    pop_size=100,
+    pop_size=20,
     init_max_depth=3,
     crossover_rate=0.8,
     selection_cutoff=0.0,
-    gens_cutoff=100,
+    gens_cutoff=200,
     mutation_rate=0.1,
     verbose=False,
     templates = ((1, 'RANDOM'),)
@@ -256,7 +258,11 @@ for pair in data:
     x1.append(pair[0])
     y1.append(pair[1])
 
-for x in range(0,20):
+mx = max(pair[0] for pair in data)
+mn = min(pair[0] for pair in data)
+
+for x in range(0,1000):
+    x = (x/1000)*(mx-mn) + mn
     x2.append(x)
     y2.append(interpreter.interpret([add,solution,C], {'X':x}))
 
@@ -280,8 +286,10 @@ print()'''
 
 print("found model f(X) = ")
 from sympy import latex, sympify
-print(latex(sympify(expr_print(interpreter.simplify([add,solution,C]))).expand().simplify()))
+print(latex(sympify(expr_print(interpreter.simplify([add,solution,C]))).expand().simplify()).replace("log","ln"))
 print()
+
+#- 0.013858710635380252 X^{4} + 0.53697500977103116 X^{3} - 6.5551372986654139 X^{2} + 28.389679800710066 X - 16.376144862352344
 
 #0.3371227270112964 X + 11.10095240393376 \log{\left(X + 1.9038478537754524 \right)} + 42.95437418392193
 #- 0.015400722326537062 X^{4} + 0.58683298779939933 X^{3} - 7.1004068081623992 X^{2} + 30.830328731161897 X - 20.806366953841057
