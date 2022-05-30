@@ -113,7 +113,7 @@ def score(exp):
         print("overflow")
         return float("inf")
         
-    return math.sqrt(statistics.mean(square_errors))/data_diffs_mean + 0.001*n_nodes(exp)
+    return math.sqrt(statistics.mean(square_errors))/abs(data_diffs_mean) + 0.001*n_nodes(exp)
 
 import random
 
@@ -227,7 +227,7 @@ def nscore(exp):
     except OverflowError:
         return float('inf')
         
-    return math.sqrt(statistics.mean(square_errors))/data_mean + 0.01*n_nodes(exp)
+    return math.sqrt(statistics.mean(square_errors))/abs(data_mean) + 0.01*n_nodes(exp)
     
 os.system("cls")
 print("matching vertical shift...")
