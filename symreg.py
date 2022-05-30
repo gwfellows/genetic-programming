@@ -21,6 +21,24 @@ my_parser.add_argument('--suggest',
                         required=False,
                         help='suggest a class of functions as the starting point for evolution')
 
+my_parser.add_argument('--psize',
+                        action='store',
+                        type=int,
+                        required=False,
+                        help='the population size to use (30 by default)')
+
+my_parser.add_argument('--updatefreq',
+                        action='store',
+                        type=int,
+                        required=False,
+                        help='how often to update the display (every 10 generations by default)')
+
+my_parser.add_argument('--sizepenalty',
+                        action='store',
+                        type=int,
+                        required=False,
+                        help='how much to penalize large trees (0.001 by default)')
+                        
 args = my_parser.parse_args()
 
 def add(a, b):
@@ -100,6 +118,11 @@ data_diffs_mean = statistics.mean(row[1] for row in data_diffs)
 def n_nodes(exp, d=0):
     return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else 1
 
+if args.sizepenalty:
+    sizepenalty = args.sizepenalty
+else:
+    sizepenalty = 0.001
+    
 def score(exp):
     square_errors = []
    
@@ -113,7 +136,7 @@ def score(exp):
         print("overflow")
         return float("inf")
         
-    return math.sqrt(statistics.mean(square_errors))/abs(data_diffs_mean) + 0.001*n_nodes(exp)
+    return math.sqrt(statistics.mean(square_errors))/abs(data_diffs_mean) + sizepenalty*n_nodes(exp)
 
 import random
 
@@ -199,16 +222,28 @@ else:
     FUNCTIONS = {add,mul,sub,div,ln}
     TERMINALS = {randnum,1,'X'}
 
+if args.psize:
+    psize = args.psize
+else:
+    psize = 30
+
+if args.updatefreq:
+    updatefreq = args.updatefreq
+else:
+    updatefreq = 10
+
+
 solution = interpreter.evolve(
     functions=FUNCTIONS,
     terminals=TERMINALS,
     fitness_function = lambda exp: score(exp),
-    pop_size=30,
+    pop_size=psize,
     init_max_depth=3,
     crossover_rate=0.8,
     selection_cutoff=0.1,
     mutation_rate=0.1,
     verbose=True,
+    updatefreq=updatefreq,
     templates = templates
     )
 

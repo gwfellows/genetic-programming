@@ -176,7 +176,8 @@ def evolve(functions,
     verbose=True,
     gens_cutoff = 500_000,
     mutation_rate=0,
-    templates=((1, 'RANDOM'),)):  
+    templates=((1, 'RANDOM'),),
+    updatefreq=10):  
 
     
     names = [t[1] for t in templates]
@@ -197,7 +198,7 @@ def evolve(functions,
             fitnesses = list(map(lambda p: 1/(1+fitness_function(p)), population))
             xs.append(_)
             ys.append(1/(max(fitnesses))-1)
-            if verbose and _%10==0:
+            if verbose and _%updatefreq==0:
                 os.system("cls")
                 print("matching slope...")
                 print()
