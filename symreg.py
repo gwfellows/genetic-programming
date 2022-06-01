@@ -5,9 +5,10 @@ import argparse
 import os
 import sys
 import math
-import matplotlib.pyplot as plt            
 import statistics
 import csv
+
+import matplotlib.pyplot as plt    
 
 my_parser = argparse.ArgumentParser(prog='symreg',description='Use symbolic regression to fit a curve to data')
 my_parser.add_argument('Path',
@@ -97,52 +98,6 @@ def cos(a):
     except:
         return 0
 
-data = []
-#log10 transistors-per-microprocessor
-with open(args.Path, mode='r') as d:
-    reader = csv.reader(d)
-    data = [(float(rows[0]),float(rows[1])) for rows in reader]
-
-def get_differences(data):
-    diffs = []
-    for i in range(1,len(data)):
-        x = data[i][0]
-        y = (data[i][1]-data[i-1][1])/(data[i][0]-data[i-1][0])
-        diffs.append([x,y])
-    return diffs
-    
-#use NRMSE
-data_diffs = get_differences(data)
-data_diffs_mean = statistics.mean(row[1] for row in data_diffs)
-
-def n_nodes(exp, d=0):
-    return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else 1
-
-if args.sizepenalty:
-    sizepenalty = args.sizepenalty
-else:
-    sizepenalty = 0.001
-    
-def score(exp):
-    square_errors = []
-   
-    data_to_score = [[pair[0],interpreter.interpret(exp, {'X':pair[0]})] for pair in data]
-    diffs_to_score = get_differences(data_to_score)
-    
-    try:
-        for i, pair in enumerate(diffs_to_score):
-            square_errors.append((diffs_to_score[i][1]-data_diffs[i][1])**2)
-    except OverflowError:
-        print("overflow")
-        return float("inf")
-        
-    return math.sqrt(statistics.mean(square_errors))/abs(data_diffs_mean) + sizepenalty*n_nodes(exp)
-
-import random
-
-def randnum():
-    return random.random()*4-2
-
 #print a tree as a expression
 #only works with binary operators +, *, / and -
 #and cosine, and the constant pi
@@ -169,6 +124,67 @@ def expr_print(exp):
         return "ln("+expr_print(exp[1])+")"
     if exp[0] == squared:
         return "("+expr_print(exp[1])+"**(2))"
+        
+data = []
+#log10 transistors-per-microprocessor
+with open(args.Path, mode='r') as d:
+    reader = csv.reader(d)
+    data = [(float(rows[0]),float(rows[1])) for rows in reader]
+
+def get_differences(data):
+    diffs = []
+    for i in range(1,len(data)):
+        x = data[i][0]
+        y = (data[i][1]-data[i-1][1])/(data[i][0]-data[i-1][0])
+        diffs.append([x,y])
+    return diffs
+    
+#use NRMSE
+data_diffs = get_differences(data)
+data_diffs_mean = statistics.mean(row[1] for row in data_diffs)
+
+def n_nodes(exp, d=0):
+    return sum(map(n_nodes,exp)) if type(exp) in (tuple, list) else 1
+
+if args.sizepenalty:
+    sizepenalty = args.sizepenalty
+else:
+    sizepenalty = 0.001
+    
+#n=0
+
+def score(exp):
+    global n
+    square_errors = []
+   
+    data_to_score = [[pair[0],interpreter.interpret(exp, {'X':pair[0]})] for pair in data]
+    diffs_to_score = get_differences(data_to_score)
+    
+    try:
+        for i, pair in enumerate(diffs_to_score):
+            square_errors.append((diffs_to_score[i][1]-data_diffs[i][1])**2)
+    except OverflowError:
+        print("overflow")
+        return float("inf")
+    #import matplotlib.pyplot as plt            
+
+    #plt.plot([i for i in range(0,36)], [interpreter.interpret(exp, {'X':i}) for i in range(0,36)])
+    '''if random.random()<0.05:
+        print(expr_print(exp)+"\n"+str(math.sqrt(statistics.mean(square_errors))/abs(data_diffs_mean) + sizepenalty*n_nodes(exp)))'''
+    #plt.show()
+    #plt.savefig("GRPH"+str(n)+".png")
+    #plt.clf()
+    #plt.title("")
+    
+    #n+=1
+    
+    return math.sqrt(statistics.mean(square_errors))/abs(data_diffs_mean) + sizepenalty*n_nodes(exp)
+
+import random
+
+def randnum():
+    return random.random()*4-2
+
         
 def nargs(func):
     return len(signature(func).parameters)
