@@ -320,12 +320,10 @@ for x in range(0,1000):
 
 plt.scatter(x1,y1, color='blue',marker='o')
 plt.plot(x2,y2, color='red', linestyle='--')
-#plt.yscale('log')
 plt.show()
 
 
-#print("PI = ", interpreter.interpret(solution))
-#print(max_depth(solution))
+
 '''
 interpreter.graphprint([add,solution,C], "sol.gv")
 print()
@@ -339,15 +337,3 @@ print("found model f(X) = ")
 from sympy import latex, sympify
 print(latex(sympify(expr_print(interpreter.simplify([add,solution,C]))).expand().simplify()).replace("log","ln"))
 print()
-
-'''
-Oosterbaan, R.J.. (2019). CROP TOLERANCE TO SOIL SALINITY, STATISTICAL ANALYSIS OF DATA MEASURED IN FARM LANDS. '''
-
-#- 0.013858710635380252 X^{4} + 0.53697500977103116 X^{3} - 6.5551372986654139 X^{2} + 28.389679800710066 X - 16.376144862352344
-
-#0.3371227270112964 X + 11.10095240393376 \log{\left(X + 1.9038478537754524 \right)} + 42.95437418392193
-#- 0.015400722326537062 X^{4} + 0.58683298779939933 X^{3} - 7.1004068081623992 X^{2} + 30.830328731161897 X - 20.806366953841057
-#logistic curves
-#0.6348985345500741 X + \ln{\left(X^{2} \cdot \left(0.53521237866860454 X^{4} - 0.53521237866860454 X^{3} + 1.276952362857064 X^{2} + 2\right) \right)} + 53.46532718402938
-'''
-X \left(0.00067151805666508732 X^{5} - 0.032360861953569867 X^{4} + 0.58098621326037945 X^{3} - 4.6483746456198377 X^{2} + 15.03502728428022 X - 9.3563119247896713\right)'''
